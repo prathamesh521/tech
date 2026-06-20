@@ -1,0 +1,2997 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Complete Java Handbook</title>
+<meta name="description" content="A complete Java reference explained in plain English — from beginner basics through OOP, collections, generics, streams, concurrency, memory, and modern Java, with real-life analogies.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-dark">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  /* "Technical Blueprint" — deep ink + Spring green accent. One bold color, everything else disciplined. */
+  --green:#e07b39;          /* Java espresso amber */
+  --green-deep:#b85c1f;
+  --green-glow:rgba(224,123,57,.16);
+
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  --maxw:880px;
+  --sidebar-w:312px;
+  --radius:14px;
+  --radius-sm:9px;
+}
+html[data-theme="dark"]{
+  --bg:#0d1117;
+  --bg-soft:#11161d;
+  --bg-card:#161b22;
+  --bg-code:#0a0e14;
+  --line:#222b36;
+  --line-soft:#1a212b;
+  --text:#e6edf3;
+  --text-soft:#aeb9c4;
+  --text-dim:#7d8794;
+  --shadow:0 10px 40px -12px rgba(0,0,0,.6);
+  --header-bg:rgba(13,17,23,.82);
+}
+html[data-theme="light"]{
+  --bg:#f7f8f5;
+  --bg-soft:#ffffff;
+  --bg-card:#ffffff;
+  --bg-code:#0d1117;
+  --line:#e3e6e0;
+  --line-soft:#edefe9;
+  --text:#1a2129;
+  --text-soft:#46525e;
+  --text-dim:#7a8590;
+  --shadow:0 10px 36px -14px rgba(40,60,30,.18);
+  --header-bg:rgba(247,248,245,.85);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16.5px;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"cv05","ss01";
+  transition:background .35s ease,color .35s ease;
+}
+::selection{background:var(--green-glow);color:var(--text)}
+
+/* ============ HEADER ============ */
+header.topbar{
+  position:fixed;top:0;left:0;right:0;height:62px;z-index:50;
+  display:flex;align-items:center;gap:14px;
+  padding:0 22px;
+  background:var(--header-bg);
+  backdrop-filter:blur(16px) saturate(1.2);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-weight:700;font-size:1.02rem;letter-spacing:-.02em;color:var(--text);text-decoration:none;white-space:nowrap}
+.brand .leaf{
+  width:30px;height:30px;border-radius:9px;flex:none;
+  background:linear-gradient(135deg,var(--green),var(--green-deep));
+  display:grid;place-items:center;font-size:16px;
+  box-shadow:0 4px 14px -3px var(--green-glow);
+}
+.brand .sub{color:var(--green);font-weight:600}
+.topbar .spacer{flex:1}
+
+.search-wrap{position:relative;display:flex;align-items:center}
+#search{
+  width:210px;max-width:40vw;
+  background:var(--bg-soft);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-family:var(--font-body);font-size:.85rem;
+  padding:8px 12px 8px 34px;border-radius:10px;
+  transition:border .2s,width .25s,box-shadow .2s;
+}
+#search:focus{outline:none;border-color:var(--green);width:280px;box-shadow:0 0 0 3px var(--green-glow)}
+.search-wrap .ico{position:absolute;left:11px;color:var(--text-dim);pointer-events:none;font-size:.9rem}
+
+.theme-btn,.menu-btn{
+  width:40px;height:40px;flex:none;border-radius:10px;
+  background:var(--bg-soft);border:1px solid var(--line);
+  color:var(--text);cursor:pointer;display:grid;place-items:center;
+  transition:.2s;font-size:1.05rem;
+}
+.theme-btn:hover,.menu-btn:hover{border-color:var(--green);color:var(--green)}
+.menu-btn{display:none}
+.theme-btn .sun{display:none}
+html[data-theme="light"] .theme-btn .sun{display:block}
+html[data-theme="light"] .theme-btn .moon{display:none}
+
+/* ============ READING PROGRESS ============ */
+#progress{position:fixed;top:62px;left:0;height:2px;background:var(--green);width:0;z-index:49;transition:width .1s linear;box-shadow:0 0 8px var(--green)}
+
+/* ============ LAYOUT ============ */
+.shell{display:flex;padding-top:62px}
+nav.side{
+  position:fixed;top:62px;bottom:0;left:0;width:var(--sidebar-w);
+  overflow-y:auto;padding:22px 14px 60px 22px;
+  border-right:1px solid var(--line);
+  background:var(--bg-soft);
+  scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+}
+nav.side::-webkit-scrollbar{width:8px}
+nav.side::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.nav-label{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);margin:4px 0 12px 8px;font-weight:600}
+nav.side a{
+  display:flex;align-items:baseline;gap:10px;
+  padding:7px 11px;border-radius:8px;
+  color:var(--text-soft);text-decoration:none;
+  font-size:.875rem;line-height:1.4;
+  border-left:2px solid transparent;
+  transition:.15s;
+}
+nav.side a:hover{background:var(--bg-card);color:var(--text)}
+nav.side a.active{background:var(--green-glow);color:var(--green);border-left-color:var(--green);font-weight:600}
+nav.side a .num{font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);flex:none;width:20px;font-weight:600}
+nav.side a.active .num{color:var(--green)}
+
+main{margin-left:var(--sidebar-w);flex:1;min-width:0;display:flex;justify-content:center;padding:0 32px}
+article{width:100%;max-width:var(--maxw);padding:44px 0 120px}
+
+/* ============ HERO ============ */
+.hero{
+  margin:8px 0 40px;padding:40px 38px;border-radius:var(--radius);
+  background:
+    radial-gradient(120% 140% at 88% -10%,var(--green-glow),transparent 55%),
+    var(--bg-card);
+  border:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:"{ }";position:absolute;right:26px;bottom:-22px;
+  font-family:var(--font-mono);font-size:8rem;font-weight:700;
+  color:var(--green);opacity:.06;line-height:1;
+}
+.hero .eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:16px}
+.hero h1{font-family:var(--font-display);font-size:2.5rem;line-height:1.08;letter-spacing:-.03em;font-weight:700;margin-bottom:14px}
+.hero p.lede{color:var(--text-soft);font-size:1.05rem;max-width:60ch}
+.hero .stats{display:flex;gap:30px;margin-top:26px;flex-wrap:wrap}
+.hero .stat .n{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--green);line-height:1}
+.hero .stat .l{font-size:.76rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+
+/* ============ CONTENT TYPOGRAPHY ============ */
+.content h1{font-family:var(--font-display);font-size:1.92rem;font-weight:700;letter-spacing:-.025em;line-height:1.18;margin:64px 0 8px;padding-top:18px;scroll-margin-top:80px;position:relative}
+.content h1:first-child{margin-top:8px}
+.content h1::before{
+  content:"";position:absolute;top:0;left:0;width:46px;height:3px;
+  background:linear-gradient(90deg,var(--green),transparent);border-radius:2px;
+}
+.content h2{font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-.015em;margin:40px 0 12px;scroll-margin-top:80px;color:var(--text)}
+.content h3{font-family:var(--font-display);font-size:1.05rem;font-weight:600;margin:28px 0 8px;color:var(--text)}
+.content p{margin:13px 0;color:var(--text-soft)}
+.content strong{color:var(--text);font-weight:600}
+.content a{color:var(--green);text-decoration:none;border-bottom:1px solid transparent;transition:.15s}
+.content a:hover{border-bottom-color:var(--green)}
+.content ul,.content ol{margin:13px 0 13px 4px;padding-left:24px;color:var(--text-soft)}
+.content li{margin:6px 0}
+.content li::marker{color:var(--green)}
+.content hr{border:none;border-top:1px solid var(--line);margin:38px 0}
+
+/* inline code */
+.content code:not(pre code){
+  font-family:var(--font-mono);font-size:.84em;
+  background:var(--green-glow);color:var(--green);
+  padding:2px 6px;border-radius:5px;font-weight:500;
+  border:1px solid color-mix(in srgb,var(--green) 22%,transparent);
+}
+html[data-theme="light"] .content code:not(pre code){color:var(--green-deep)}
+
+/* code blocks */
+.content pre{
+  background:var(--bg-code);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  padding:18px 20px;margin:18px 0;overflow-x:auto;
+  position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+}
+.content pre::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--green),transparent 60%);
+  border-radius:var(--radius-sm) var(--radius-sm) 0 0;opacity:.7;
+}
+.content pre code{font-family:var(--font-mono);font-size:.83rem;line-height:1.7;background:none;padding:0;color:#e6edf3}
+.copy-btn{
+  position:absolute;top:9px;right:9px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  color:#aeb9c4;font-family:var(--font-mono);font-size:.68rem;
+  padding:4px 9px;border-radius:6px;cursor:pointer;opacity:0;transition:.18s;
+  letter-spacing:.04em;
+}
+.content pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* tables */
+.content table{width:100%;border-collapse:collapse;margin:20px 0;font-size:.9rem;display:block;overflow-x:auto}
+.content th{
+  background:var(--bg-card);font-family:var(--font-display);font-weight:600;
+  text-align:left;padding:11px 15px;border-bottom:2px solid var(--green);
+  color:var(--text);white-space:nowrap;
+}
+.content td{padding:10px 15px;border-bottom:1px solid var(--line);color:var(--text-soft);vertical-align:top}
+.content tr:hover td{background:var(--bg-soft)}
+
+/* blockquotes → callout cards */
+.content blockquote{
+  margin:20px 0;padding:15px 18px 15px 20px;
+  background:var(--bg-card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--text-dim);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  color:var(--text-soft);
+}
+.content blockquote p{margin:6px 0;color:var(--text-soft)}
+.content blockquote strong:first-child{color:var(--text)}
+/* themed callouts via JS-added classes */
+.content blockquote.cb-memory{border-left-color:#c792ea;background:color-mix(in srgb,#c792ea 7%,var(--bg-card))}
+.content blockquote.cb-behind{border-left-color:#56b6f7;background:color-mix(in srgb,#56b6f7 7%,var(--bg-card))}
+.content blockquote.cb-mistake{border-left-color:#ff8b6b;background:color-mix(in srgb,#ff8b6b 7%,var(--bg-card))}
+.content blockquote.cb-analogy{border-left-color:var(--green);background:color-mix(in srgb,var(--green) 8%,var(--bg-card))}
+.content blockquote.cb-quote{border-left-color:var(--text-dim);font-style:italic}
+
+/* mermaid */
+.mermaid{margin:24px 0;text-align:center;background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:22px;overflow-x:auto}
+
+/* section anchor on hover */
+.content h1 .anchor,.content h2 .anchor{opacity:0;margin-left:8px;color:var(--green);font-size:.8em;transition:.15s;text-decoration:none}
+.content h1:hover .anchor,.content h2:hover .anchor{opacity:.6}
+
+/* back-to-top */
+#totop{
+  position:fixed;bottom:26px;right:26px;width:46px;height:46px;border-radius:13px;
+  background:var(--green);color:#fff;border:none;cursor:pointer;
+  display:grid;place-items:center;font-size:1.15rem;
+  box-shadow:0 8px 22px -6px var(--green-glow),0 4px 14px rgba(0,0,0,.25);
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:.25s;z-index:40;
+}
+#totop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#totop:hover{background:var(--green-deep)}
+
+/* mobile */
+.scrim{display:none;position:fixed;inset:62px 0 0;background:rgba(0,0,0,.5);z-index:44}
+@media(max-width:1080px){
+  :root{--sidebar-w:280px}
+}
+@media(max-width:860px){
+  .menu-btn{display:grid}
+  nav.side{transform:translateX(-100%);transition:transform .28s ease;z-index:45;width:300px;box-shadow:var(--shadow)}
+  nav.side.open{transform:translateX(0)}
+  .scrim.show{display:block}
+  main{margin-left:0;padding:0 18px}
+  #search{width:140px}
+  #search:focus{width:170px}
+  .hero{padding:30px 22px}
+  .hero h1{font-size:1.9rem}
+  article{padding:30px 0 100px}
+}
+@media(max-width:520px){
+  .brand .sub{display:none}
+  #search{display:none}
+  body{font-size:15.5px}
+}
+/* reduced motion */
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* loading state */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:100;display:grid;place-items:center;transition:opacity .4s}
+#loader.done{opacity:0;pointer-events:none}
+.spin{width:42px;height:42px;border:3px solid var(--line);border-top-color:var(--green);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spin"></div></div>
+
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="#top">
+    <span class="leaf">☕</span>
+    <span>Java <span class="sub">Handbook</span></span>
+  </a>
+  <div class="spacer"></div>
+  <div class="search-wrap">
+    <span class="ico">⌕</span>
+    <input id="search" type="search" placeholder="Search sections…" autocomplete="off" aria-label="Search">
+  </div>
+  <button class="theme-btn" id="themeBtn" aria-label="Toggle dark and light mode">
+    <span class="moon">🌙</span><span class="sun">☀️</span>
+  </button>
+</header>
+<div id="progress"></div>
+
+<div class="shell">
+  <nav class="side" id="sidebar">
+    <div class="nav-label">Contents</div>
+    <div id="navlinks"></div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+  <main>
+    <article id="top">
+      <section class="hero">
+        <div class="eyebrow">Beginner → Intermediate → Advanced</div>
+        <h1>The Complete Java&nbsp;Handbook</h1>
+        <p class="lede">Every core idea in Java explained in plain English — with real-life analogies, runnable code, and the mistakes everyone actually makes. From your first line of code to threads, memory, and modern Java.</p>
+        <div class="stats">
+          <div class="stat"><div class="n">25</div><div class="l">Sections</div></div>
+          <div class="stat"><div class="n">3</div><div class="l">Levels</div></div>
+          <div class="stat"><div class="n">60+</div><div class="l">Analogies</div></div>
+          <div class="stat"><div class="n">100+</div><div class="l">Code Examples</div></div>
+        </div>
+      </section>
+      <div class="content" id="content"><!--CONTENT--></div>
+    </article>
+  </main>
+</div>
+
+<button id="totop" aria-label="Back to top">↑</button>
+
+<!-- Embedded markdown source -->
+<script id="md-source" type="text/markdown"># ☕ The Complete Java Handbook
+
+### From Absolute Beginner to Advanced — Explained in Plain English
+
+> **How to use this book:** Start at the top if you're new — every idea is built on the one before it. If you already know the basics, jump straight to a section using the sidebar. Each concept comes with a **real-life analogy**, runnable code, and the **common mistakes** people actually make. The 🧠 analogy, 💡 behind-the-scenes, ⚠️ mistake, and 📌 remember-this boxes are the fastest way to revise.
+
+---
+
+## 📑 Table of Contents
+
+1. [What Is Java & Why It Exists](#section-1--what-is-java)
+2. [How Java Runs — JDK, JRE & JVM](#section-2--how-java-runs)
+3. [Your First Program & Syntax Basics](#section-3--your-first-program)
+4. [Variables & Data Types](#section-4--variables-and-data-types)
+5. [Operators](#section-5--operators)
+6. [Control Flow — Decisions & Loops](#section-6--control-flow)
+7. [Methods](#section-7--methods)
+8. [Arrays](#section-8--arrays)
+9. [Strings](#section-9--strings)
+10. [Object-Oriented Programming — The Core Idea](#section-10--oop-core-idea)
+11. [Classes & Objects in Depth](#section-11--classes-and-objects)
+12. [Encapsulation](#section-12--encapsulation)
+13. [Inheritance](#section-13--inheritance)
+14. [Polymorphism](#section-14--polymorphism)
+15. [Abstraction — Abstract Classes & Interfaces](#section-15--abstraction)
+16. [Exception Handling](#section-16--exception-handling)
+17. [Collections Framework](#section-17--collections-framework)
+18. [Generics](#section-18--generics)
+19. [Functional Programming — Lambdas & Streams](#section-19--functional-programming)
+20. [Multithreading & Concurrency](#section-20--multithreading-and-concurrency)
+21. [Memory Model & Garbage Collection](#section-21--memory-and-garbage-collection)
+22. [File & I/O Handling](#section-22--file-and-io)
+23. [Modern Java (8 → 25)](#section-23--modern-java)
+24. [Common Mistakes & Best Practices](#section-24--common-mistakes)
+25. [Quick Revision Cheat Sheet](#section-25--revision-cheat-sheet)
+
+---
+
+# SECTION 1 — WHAT IS JAVA
+
+> *"Write once, run anywhere."* — the promise that made Java famous.
+
+## 1.1 What Java Actually Is
+
+Java is a **programming language** and a **platform**. As a language, it's the set of words and rules you use to write instructions for a computer. As a platform, it's the engine (the JVM) that takes those instructions and runs them on *any* device — Windows, Mac, Linux, phones, smart cards, servers — without you rewriting your code.
+
+It was created by **James Gosling** at Sun Microsystems in **1995**, and is now owned by **Oracle**. After 30 years it's still one of the most-used languages in the world — banks, Android apps, e-commerce backends, and huge enterprise systems run on it.
+
+> **🧠 Real-Life Analogy:** Think of your code as a **screenplay**. Other languages are like a play written in a local dialect — it only works in one theatre. Java's screenplay is written in a universal language, and every theatre in the world has a translator (the JVM) standing by who reads it and performs it for the local audience. You write the screenplay *once*; it plays *everywhere*.
+
+## 1.2 Why Java Was Invented
+
+Before Java, if you wrote a program in C or C++, you had to **recompile it separately for every type of machine**. A program built for Windows wouldn't run on a Mac. This was slow and painful.
+
+Java solved this with one clever idea: instead of compiling your code straight into machine instructions for *one* CPU, it compiles into an **in-between language called bytecode**, which a small program (the JVM) on each machine knows how to run. The same bytecode runs everywhere.
+
+## 1.3 What Makes Java Special
+
+| Feature | What it means in plain English |
+|---------|-------------------------------|
+| **Platform-independent** | Write once, run anywhere — same code on any OS |
+| **Object-oriented** | You model your program as real-world "things" (objects) |
+| **Automatic memory management** | Java cleans up unused memory for you (garbage collection) — no manual freeing like in C |
+| **Strongly typed** | Every variable has a fixed type; the compiler catches many mistakes before you run |
+| **Secure** | Runs inside the JVM "sandbox," limiting what malicious code can do |
+| **Multithreaded** | Can do many things at once (e.g. download a file while updating the screen) |
+| **Huge ecosystem** | Millions of free libraries and a massive community |
+
+## 1.4 Where Java Is Used
+
+- **Android apps** (for years the primary language; still huge)
+- **Enterprise backends** — banking, insurance, airlines (think systems that *cannot* fail)
+- **E-commerce** — large shopping platforms
+- **Big Data** — tools like Hadoop and Kafka are written in Java
+- **Web servers & APIs** — often with Spring Boot
+
+> **📌 Remember This:** Java = a **language** (how you write) + a **platform/JVM** (how it runs). Its superpower is that one compiled program runs on any machine.
+
+---
+
+# SECTION 2 — HOW JAVA RUNS
+
+To truly understand Java, you need to know what happens between writing code and seeing it run. Three acronyms confuse every beginner: **JDK, JRE, JVM**. Let's kill that confusion forever.
+
+## 2.1 The Three Layers
+
+```
+┌─────────────────────────────────────────────┐
+│  JDK  (Java Development Kit)                 │
+│  "Everything to BUILD + run Java"           │
+│  ┌───────────────────────────────────────┐  │
+│  │  JRE (Java Runtime Environment)       │  │
+│  │  "Everything to RUN Java"             │  │
+│  │  ┌─────────────────────────────────┐  │  │
+│  │  │  JVM (Java Virtual Machine)     │  │  │
+│  │  │  "The engine that executes      │  │  │
+│  │  │   bytecode"                     │  │  │
+│  │  └─────────────────────────────────┘  │  │
+│  │     + core libraries (String, etc.)   │  │
+│  └───────────────────────────────────────┘  │
+│     + compiler (javac), debugger, tools     │
+└─────────────────────────────────────────────┘
+```
+
+> **🧠 Real-Life Analogy:** Imagine making and watching a movie.
+> - **JVM** = the **projector** that actually plays the film.
+> - **JRE** = the **cinema** — it has the projector *plus* the screen, speakers, and seats (everything needed to *watch*).
+> - **JDK** = the **entire film studio** — the cinema *plus* the cameras, editing software, and crew needed to *make* the movie in the first place.
+>
+> If you just want to *run* Java apps, you need the JRE. If you want to *write* them, you need the JDK.
+
+## 2.2 What Each One Is
+
+**JVM (Java Virtual Machine)** — the heart of Java. It's the program that reads your compiled bytecode and executes it on the actual hardware. Crucially, there's a *different* JVM built for each operating system, but they all understand the *same* bytecode. **This is the "run anywhere" magic.**
+
+**JRE (Java Runtime Environment)** — the JVM *plus* the standard library (all the ready-made classes like `String`, `ArrayList`, `Math`). It's everything needed to *run* a Java program, but not to *write* one.
+
+**JDK (Java Development Kit)** — the JRE *plus* the development tools: the **compiler (`javac`)**, the launcher (`java`), the documentation generator, and the debugger. This is what developers install.
+
+## 2.3 The Journey of Your Code
+
+Here's exactly what happens from typing code to seeing output:
+
+```
+You write:        Hello.java        (human-readable source code)
+                       │
+                       │  javac  (the compiler)
+                       ▼
+Compiler makes:   Hello.class       (bytecode — not human, not machine)
+                       │
+                       │  java  (launches the JVM)
+                       ▼
+   JVM loads the bytecode → verifies it → executes it
+                       │
+                       ▼
+              Output on your screen
+```
+
+Let me show the same flow as a diagram:
+
+```mermaid
+flowchart LR
+    A["Hello.java<br/>source code"] -->|"javac compiles"| B["Hello.class<br/>bytecode"]
+    B -->|"java runs"| C{JVM}
+    C --> D["Class Loader<br/>loads bytecode"]
+    D --> E["Bytecode Verifier<br/>checks safety"]
+    E --> F["Execution Engine<br/>runs it"]
+    F --> G["Output"]
+```
+
+## 2.4 Compiled AND Interpreted
+
+People argue whether Java is "compiled" or "interpreted." The honest answer: **both**.
+
+1. **Compiled** — `javac` compiles your `.java` into `.class` bytecode *once*.
+2. **Interpreted** — the JVM then reads that bytecode and runs it.
+3. **JIT compilation** — to make it fast, the JVM watches which parts of your code run a lot ("hot" code) and the **Just-In-Time (JIT) compiler** turns those hot parts into native machine code on the fly, so they run at near-C speed.
+
+> **💡 Behind the Scenes:** This is why a Java program is sometimes a little slow for the first few seconds and then speeds up — the JIT is "warming up," watching your code and compiling the busy parts to native machine code. Long-running servers benefit the most.
+
+## 2.5 What "Bytecode" Looks Like
+
+You'll never write bytecode, but here's the idea. This Java line:
+
+```java
+int sum = a + b;
+```
+
+becomes JVM instructions roughly like:
+
+```
+iload_1      // push variable a onto the stack
+iload_2      // push variable b onto the stack
+iadd         // add the top two values
+istore_3     // store the result into variable sum
+```
+
+The JVM is a **stack machine** — it pushes values onto a stack and operates on them. You don't need to memorize this; just know bytecode is a simple, universal instruction set that every JVM understands.
+
+> **📌 Remember This:** **JDK** to build, **JRE** to run, **JVM** does the running. Your `.java` → (javac) → `.class` bytecode → (JVM) → runs anywhere. The JIT compiler makes hot code fast.
+
+> **⚠️ Common Mistake:** Beginners install the JRE and then wonder why `javac` doesn't work. If you're *writing* Java, install the **JDK**. The JRE alone can't compile.
+
+---
+# SECTION 3 — YOUR FIRST PROGRAM
+
+Let's write and dissect the classic first program. Every single word in it teaches you something.
+
+## 3.1 Hello, World
+
+```java
+public class Hello {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+Run it and you see: `Hello, World!`
+
+## 3.2 Decoding Every Word
+
+Let's break this down piece by piece, because each part is a real Java concept you'll use forever.
+
+| Code | What it means |
+|------|---------------|
+| `public class Hello` | Declares a **class** named `Hello`. In Java, *all* code lives inside a class. The file must be named `Hello.java`. |
+| `public` | An **access modifier** — this class is visible to everyone. |
+| `static` | This method belongs to the class itself, not to an object — so the JVM can call it without creating an object first. |
+| `void` | The method returns **nothing**. |
+| `main` | The special method name the JVM looks for to **start** the program. Execution always begins here. |
+| `String[] args` | An array of text inputs you can pass in from the command line. |
+| `System.out.println(...)` | Prints a line to the screen. `System.out` is the standard output; `println` = "print line." |
+
+> **🧠 Real-Life Analogy:** `main` is the **front door** of your program. No matter how big the house (your code) is, visitors (the JVM) always enter through the same front door. If there's no `main`, the JVM stands outside, confused — "where do I come in?"
+
+## 3.3 The Rules of Java Syntax
+
+A few rules that trip up every beginner:
+
+- **Every statement ends with a semicolon `;`** — like a full stop in a sentence.
+- **Code blocks are wrapped in curly braces `{ }`** — they group statements together.
+- **Java is case-sensitive** — `myVar` and `myvar` are two *different* things. `String` works; `string` does not.
+- **The public class name must match the file name** — class `Hello` → file `Hello.java`.
+
+## 3.4 Comments — Notes for Humans
+
+Comments are ignored by the computer; they're notes for people reading the code.
+
+```java
+// This is a single-line comment
+
+/* This is a
+   multi-line comment */
+
+/**
+ * This is a Javadoc comment — used to auto-generate documentation.
+ * @param args command-line arguments
+ */
+```
+
+> **📌 Remember This:** All code lives in a class. The program starts at `main`. Statements end with `;`. Java cares about UPPER vs lower case.
+
+> **⚠️ Common Mistake:** Forgetting the semicolon, or naming the file differently from the public class. Both give errors before your program even runs. Read the error message — it usually points at the exact line.
+
+---
+
+# SECTION 4 — VARIABLES AND DATA TYPES
+
+A **variable** is a named box in memory that holds a value. You put data in, take it out, and change it.
+
+## 4.1 Declaring a Variable
+
+```java
+int age = 25;
+//  │    │   │
+//  │    │   └── the value stored
+//  │    └────── the variable's name
+//  └─────────── the type (what kind of data)
+```
+
+You tell Java the **type** first, then the **name**, then optionally an initial **value**.
+
+> **🧠 Real-Life Analogy:** A variable is like a **labeled jar** in your kitchen. The *label* is the name (`sugar`), the *kind of jar* is the type (a jar made for dry goods), and what's *inside* is the value. You can't pour soup into a jar labeled and shaped for sugar — Java enforces the same discipline with types.
+
+## 4.2 The Two Families of Types
+
+Java types come in two groups: **primitives** (raw simple values) and **reference types** (objects).
+
+### Primitive Types (8 of them)
+
+These hold a single, simple value directly. They are the building blocks.
+
+| Type | Holds | Size | Example | Range / Note |
+|------|-------|------|---------|--------------|
+| `byte` | whole number | 8-bit | `byte b = 100;` | -128 to 127 |
+| `short` | whole number | 16-bit | `short s = 5000;` | ~ -32k to 32k |
+| `int` | whole number | 32-bit | `int i = 100000;` | ~ ±2.1 billion (the default for whole numbers) |
+| `long` | big whole number | 64-bit | `long l = 9000000000L;` | huge; note the `L` suffix |
+| `float` | decimal | 32-bit | `float f = 3.14f;` | note the `f` suffix |
+| `double` | decimal | 64-bit | `double d = 3.14159;` | the default for decimals; more precise |
+| `char` | a single character | 16-bit | `char c = 'A';` | uses single quotes |
+| `boolean` | true or false | 1-bit | `boolean isOn = true;` | only `true` or `false` |
+
+### Reference Types
+
+Everything else — `String`, arrays, and any object you create from a class. A reference variable doesn't hold the object itself; it holds the **address** (a reference) of where the object lives in memory.
+
+```java
+String name = "Alice";   // String is a reference type
+int[] scores = {90, 85}; // arrays are reference types
+```
+
+> **💡 Behind the Scenes:** A primitive like `int x = 5` stores the number `5` directly in the variable's box. A reference like `String s = "hi"` stores an *address* — the box holds a sticky note saying "the actual String is over there at memory location #4823." This difference explains a lot of Java behavior later (especially `==` vs `.equals()`).
+
+## 4.3 `var` — Let Java Figure Out the Type
+
+Since Java 10, you can use `var` for local variables and let the compiler infer the type:
+
+```java
+var age = 25;            // Java knows this is an int
+var name = "Alice";      // Java knows this is a String
+var list = new ArrayList<String>();  // cleaner than writing the type twice
+```
+
+It's still strongly typed — `var` is *not* like dynamic typing in Python. The type is fixed at compile time; you just didn't have to write it.
+
+## 4.4 Constants — Values That Never Change
+
+Use `final` to make a variable unchangeable:
+
+```java
+final double PI = 3.14159;
+PI = 4;   // ❌ ERROR — cannot reassign a final variable
+```
+
+Convention: constants are written in `UPPER_SNAKE_CASE`.
+
+## 4.5 Type Casting — Converting Between Types
+
+**Widening (automatic)** — small fits into big, no work needed:
+```java
+int i = 100;
+double d = i;   // int → double, automatic. d is 100.0
+```
+
+**Narrowing (manual)** — big into small, you must force it and may lose data:
+```java
+double d = 9.99;
+int i = (int) d;   // explicit cast. i is 9 — the .99 is chopped off!
+```
+
+> **⚠️ Common Mistake:** Using `int` for money. `0.1 + 0.2` in `double` gives `0.30000000000000004` because of how decimals are stored in binary. For money, use `BigDecimal`, never `float`/`double`.
+
+> **📌 Remember This:** 8 primitives hold raw values directly; everything else is a reference holding an *address*. `int` is the default whole number, `double` the default decimal. `final` = constant.
+
+---
+
+# SECTION 5 — OPERATORS
+
+Operators are symbols that perform operations on values. You already know most from school math.
+
+## 5.1 Arithmetic Operators
+
+```java
+int a = 10, b = 3;
+a + b   // 13  addition
+a - b   // 7   subtraction
+a * b   // 30  multiplication
+a / b   // 3   division — INTEGER division! drops the decimal
+a % b   // 1   modulus — the REMAINDER after division
+```
+
+> **⚠️ Common Mistake:** `10 / 3` gives `3`, not `3.33`. When both numbers are integers, Java does **integer division** and throws away the fraction. To get `3.33`, make one a decimal: `10.0 / 3`.
+
+The **modulus `%`** is more useful than it looks — it gives the remainder:
+```java
+7 % 2   // 1  → odd number (remainder when divided by 2 is 1)
+8 % 2   // 0  → even number
+```
+That's the standard way to check if a number is even or odd.
+
+> **🧠 Real-Life Analogy:** Modulus is like a **clock**. After 12 it wraps back to 1. `15 % 12 = 3` — 15:00 (3 PM) is "3 o'clock." Anything that *wraps around* — clock hours, days of the week, alternating rows — is a job for `%`.
+
+## 5.2 Assignment Operators
+
+```java
+int x = 5;
+x += 3;   // x = x + 3  → 8     (shorthand)
+x -= 2;   // x = x - 2  → 6
+x *= 2;   // x = x * 2  → 12
+x /= 4;   // x = x / 4  → 3
+```
+
+## 5.3 Comparison Operators
+
+These compare two values and produce a `boolean` (`true`/`false`):
+
+```java
+a == b   // equal to
+a != b   // not equal to
+a > b    // greater than
+a < b    // less than
+a >= b   // greater than or equal
+a <= b   // less than or equal
+```
+
+> **⚠️ Common Mistake:** Confusing `=` (assignment — "put this value in") with `==` (comparison — "are these equal?"). `if (x = 5)` is a bug; `if (x == 5)` is the check.
+
+## 5.4 Logical Operators
+
+These combine boolean conditions:
+
+```java
+boolean a = true, b = false;
+a && b   // AND  → true only if BOTH are true     → false
+a || b   // OR   → true if AT LEAST ONE is true    → true
+!a       // NOT  → flips it                         → false
+```
+
+> **💡 Behind the Scenes — Short-Circuiting:** `&&` and `||` are *lazy*. In `a && b`, if `a` is already `false`, Java doesn't even check `b` — the answer can't change. This is why `if (user != null && user.isActive())` is safe: if `user` is null, the second part never runs, avoiding a crash. Order matters!
+
+## 5.5 Increment & Decrement
+
+```java
+int i = 5;
+i++;   // i becomes 6  (increment by 1)
+i--;   // back to 5    (decrement by 1)
+```
+
+There's a subtle difference between `i++` (post) and `++i` (pre):
+```java
+int a = 5;
+int b = a++;   // b gets 5 (old value), THEN a becomes 6
+int c = ++a;   // a becomes 7 FIRST, then c gets 7
+```
+"Post" uses the value then changes it; "pre" changes it then uses it.
+
+## 5.6 The Ternary Operator — a Mini if/else
+
+A compact way to choose between two values:
+
+```java
+int age = 20;
+String status = (age >= 18) ? "Adult" : "Minor";
+//               condition    ? if true : if false
+```
+Reads as: "is age ≥ 18? If yes, `"Adult"`, otherwise `"Minor"`."
+
+> **📌 Remember This:** `/` on two ints truncates. `%` gives the remainder (great for even/odd & wrapping). `==` compares, `=` assigns. `&&`/`||` short-circuit, so put the cheap/safe check first.
+
+---
+# SECTION 6 — CONTROL FLOW
+
+Control flow is how your program **makes decisions** and **repeats actions**. Without it, code just runs top to bottom once. With it, your program can think and loop.
+
+## 6.1 The `if` Statement
+
+Run code only when a condition is true:
+
+```java
+int temperature = 35;
+
+if (temperature > 30) {
+    System.out.println("It's hot! Turn on the AC.");
+}
+```
+
+Add `else` for the "otherwise" case, and `else if` for more branches:
+
+```java
+int score = 75;
+
+if (score >= 90) {
+    System.out.println("Grade: A");
+} else if (score >= 70) {
+    System.out.println("Grade: B");
+} else if (score >= 50) {
+    System.out.println("Grade: C");
+} else {
+    System.out.println("Grade: Fail");
+}
+```
+
+> **🧠 Real-Life Analogy:** An `if/else if/else` chain is like a **bouncer checking IDs** at a club. They check the first rule ("VIP list?"), if not, the next ("over 21?"), and so on. The moment one check passes, that person is handled and the bouncer stops checking. Only one branch ever runs.
+
+## 6.2 The `switch` Statement
+
+When you're comparing one variable against many fixed values, `switch` is cleaner than a long `if/else` chain:
+
+```java
+int day = 3;
+switch (day) {
+    case 1: System.out.println("Monday"); break;
+    case 2: System.out.println("Tuesday"); break;
+    case 3: System.out.println("Wednesday"); break;
+    default: System.out.println("Another day");
+}
+```
+
+> **⚠️ Common Mistake:** Forgetting `break`. Without it, execution "falls through" and keeps running the next cases too. This is a classic source of bugs in old-style switches.
+
+**Modern switch (Java 14+)** fixes this with arrow syntax — no `break` needed, and it can return a value:
+
+```java
+String name = switch (day) {
+    case 1 -> "Monday";
+    case 2 -> "Tuesday";
+    case 3 -> "Wednesday";
+    default -> "Another day";
+};
+```
+
+This is safer, shorter, and the recommended modern style.
+
+## 6.3 Loops — Repeating Actions
+
+Loops repeat a block of code. Java has three main kinds.
+
+### The `for` loop — when you know how many times
+
+```java
+for (int i = 1; i <= 5; i++) {
+    System.out.println("Count: " + i);
+}
+// Prints Count: 1 through Count: 5
+```
+
+The three parts: `for (start; condition; step)`:
+- **start** — `int i = 1` runs once at the beginning
+- **condition** — `i <= 5` is checked before each loop; while true, keep going
+- **step** — `i++` runs after each loop
+
+### The `while` loop — when you don't know how many times
+
+Repeats *as long as* a condition stays true:
+
+```java
+int fuel = 5;
+while (fuel > 0) {
+    System.out.println("Driving... fuel left: " + fuel);
+    fuel--;
+}
+```
+
+### The `do-while` loop — runs at least once
+
+Checks the condition *after* the body, so the body always runs at least once:
+
+```java
+int choice;
+do {
+    choice = showMenu();   // always shows the menu at least once
+} while (choice != 0);
+```
+
+### The enhanced `for` (for-each) — looping over a collection
+
+The cleanest way to go through every item in an array or list:
+
+```java
+int[] numbers = {10, 20, 30};
+for (int n : numbers) {
+    System.out.println(n);   // read as: "for each n in numbers"
+}
+```
+
+> **🧠 Real-Life Analogy:** A `for` loop with a counter is like telling someone "do 20 push-ups" — you know the exact count. A `while` loop is "keep doing push-ups until you're tired" — you don't know how many, you just have a stop condition. `do-while` is "do at least one push-up, then keep going until tired."
+
+## 6.4 Break and Continue
+
+- **`break`** — jump out of the loop entirely, right now.
+- **`continue`** — skip the rest of *this* round and jump to the next iteration.
+
+```java
+for (int i = 1; i <= 10; i++) {
+    if (i == 5) break;       // stop completely at 5
+    if (i % 2 == 0) continue; // skip even numbers
+    System.out.println(i);    // prints 1, 3
+}
+```
+
+> **📌 Remember This:** Use `for` when you know the count, `while` when you have a stop condition, `do-while` when it must run at least once, and `for-each` to walk a collection. Prefer the modern `switch ->` to avoid fall-through bugs.
+
+---
+
+# SECTION 7 — METHODS
+
+A **method** is a named, reusable block of code that does one job. Instead of copying the same lines everywhere, you write them once in a method and *call* it whenever needed.
+
+## 7.1 Anatomy of a Method
+
+```java
+public static int add(int a, int b) {
+    return a + b;
+}
+//     │      │    │       │        │
+//     │      │    │       │        └── body: what it does
+//     │      │    │       └── parameters: inputs it takes
+//     │      │    └── name: how you call it
+//     │      └── return type: what kind of value it gives back
+//     └── modifiers: visibility & behavior
+```
+
+You'd call it like this:
+```java
+int result = add(3, 4);   // result is 7
+```
+
+> **🧠 Real-Life Analogy:** A method is like a **coffee machine**. You don't care *how* it works inside. You put in *inputs* (water, beans — the parameters), press the button (call the method), and get an *output* (coffee — the return value). The beauty is you can use it again and again without rebuilding it each time.
+
+## 7.2 Parameters vs Return Value
+
+- **Parameters** are the inputs you hand the method.
+- The **return value** is the result it hands back. If a method returns nothing, its return type is `void`.
+
+```java
+public static void greet(String name) {   // takes input, returns nothing
+    System.out.println("Hello, " + name);
+}
+
+public static double area(double radius) { // takes input, returns a value
+    return 3.14159 * radius * radius;
+}
+```
+
+## 7.3 Why Methods Matter — DRY
+
+The golden rule: **DRY — Don't Repeat Yourself.** If you find yourself copying the same code, put it in a method. Then if you need to fix it, you fix it in *one* place instead of ten.
+
+## 7.4 Method Overloading
+
+Java lets you have **multiple methods with the same name** as long as their *parameters differ*. This is called overloading.
+
+```java
+int multiply(int a, int b)            { return a * b; }
+double multiply(double a, double b)   { return a * b; }
+int multiply(int a, int b, int c)     { return a * b * c; }
+```
+
+Java picks the right one based on the arguments you pass. Same *name*, different *signatures*.
+
+> **🧠 Real-Life Analogy:** Overloading is like the word "open." "Open the door," "open a bank account," "open the meeting" — same verb, but what happens depends on the object. Java figures out which "multiply" you mean from what you give it.
+
+## 7.5 The `static` Keyword (First Look)
+
+A `static` method belongs to the **class itself**, not to any individual object. You call it using the class name:
+
+```java
+Math.max(5, 10);   // max is a static method on the Math class
+```
+
+You don't create a `Math` object first — you just use it. We'll go deeper on `static` in the OOP sections. For now: static = "belongs to the class, shared by all."
+
+## 7.6 Recursion — A Method That Calls Itself
+
+A method can call itself to solve a problem by breaking it into smaller versions of itself:
+
+```java
+public static int factorial(int n) {
+    if (n <= 1) return 1;        // base case — stops the recursion
+    return n * factorial(n - 1); // recursive case — calls itself
+}
+// factorial(4) = 4 * 3 * 2 * 1 = 24
+```
+
+> **⚠️ Common Mistake:** Forgetting the **base case** (the stopping condition). Without it, the method calls itself forever until the program crashes with a `StackOverflowError`. Every recursion *must* have a way to stop.
+
+> **📌 Remember This:** Methods package reusable logic (DRY). They take parameters, optionally return a value. Overloading = same name, different parameters. Recursion needs a base case or it crashes.
+
+---
+
+# SECTION 8 — ARRAYS
+
+An **array** is a container that holds a **fixed number of values of the same type**, lined up in order and accessed by position.
+
+## 8.1 Creating Arrays
+
+```java
+// Method 1: declare with a size, fill later
+int[] scores = new int[5];   // 5 slots, all start at 0
+
+// Method 2: declare with values directly
+int[] ages = {25, 30, 35, 40};
+
+String[] names = {"Alice", "Bob", "Charlie"};
+```
+
+> **🧠 Real-Life Analogy:** An array is an **egg carton**. It has a fixed number of slots (say 12), each slot holds one egg (one value), and you refer to each by its position. You can't suddenly make a 12-slot carton hold 13 eggs — arrays have a fixed size once created.
+
+## 8.2 Accessing Elements — Indexing Starts at ZERO
+
+This is the #1 thing beginners get wrong. The **first element is at index 0**, not 1.
+
+```java
+String[] names = {"Alice", "Bob", "Charlie"};
+//   index:          0        1        2
+
+names[0]   // "Alice"   ← first element
+names[1]   // "Bob"
+names[2]   // "Charlie" ← last element (length is 3, so last index is 2)
+```
+
+To change a value:
+```java
+names[1] = "Bobby";   // Bob becomes Bobby
+```
+
+## 8.3 Array Length
+
+Every array knows its own size via `.length` (note: no parentheses — it's a field, not a method):
+
+```java
+int[] nums = {10, 20, 30};
+System.out.println(nums.length);   // 3
+```
+
+## 8.4 Looping Through Arrays
+
+```java
+int[] nums = {10, 20, 30};
+
+// Classic for loop — when you need the index
+for (int i = 0; i < nums.length; i++) {
+    System.out.println("Index " + i + ": " + nums[i]);
+}
+
+// For-each — cleaner when you just need the values
+for (int n : nums) {
+    System.out.println(n);
+}
+```
+
+> **⚠️ Common Mistake — ArrayIndexOutOfBoundsException:** An array of length 3 has valid indexes 0, 1, 2. Trying `nums[3]` crashes with `ArrayIndexOutOfBoundsException`. This is why loops use `i < length`, *not* `i <= length`.
+
+## 8.5 Multi-Dimensional Arrays
+
+An array of arrays — useful for grids, tables, and matrices:
+
+```java
+int[][] grid = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
+
+grid[1][2]   // row 1, column 2 → 6
+
+// Loop through a 2D array
+for (int row = 0; row < grid.length; row++) {
+    for (int col = 0; col < grid[row].length; col++) {
+        System.out.print(grid[row][col] + " ");
+    }
+    System.out.println();
+}
+```
+
+> **🧠 Real-Life Analogy:** A 2D array is a **spreadsheet** or a **chessboard** — you locate any cell by its row and column. `grid[1][2]` is "row 1, column 2."
+
+## 8.6 The Big Limitation of Arrays
+
+Arrays have a **fixed size**. Once you make an `int[5]`, you can't grow it to hold a 6th value. In real programs you usually don't know how many items you'll have, so you need something that grows. That's the **`ArrayList`** and the whole **Collections Framework** — coming up in Section 17.
+
+> **📌 Remember This:** Arrays = fixed size, same type, indexed from **0**, last index is `length - 1`. Use `.length` (no parentheses). When you need a resizable container, reach for `ArrayList` instead.
+
+---
+# SECTION 9 — STRINGS
+
+A **String** is a sequence of characters — text. It's the most-used type in Java, and it has some special behavior worth understanding deeply.
+
+## 9.1 Creating Strings
+
+```java
+String greeting = "Hello";          // the normal way
+String name = new String("Alice");  // works, but rarely used
+```
+
+## 9.2 Strings Are Immutable
+
+This is the single most important fact about Strings: **once created, a String can never be changed.** Every operation that looks like it modifies a String actually creates a *brand-new* String.
+
+```java
+String s = "Hello";
+s.concat(" World");        // this creates a new String...
+System.out.println(s);     // ...but s is STILL "Hello"!
+
+s = s.concat(" World");    // you must reassign to keep the result
+System.out.println(s);     // now "Hello World"
+```
+
+> **🧠 Real-Life Analogy:** A String is like a word **carved into stone**. You can't erase a letter. If you want a different word, you carve a whole new stone. The old stone stays exactly as it was. This is why "modifying" a String really means "making a new one."
+
+> **💡 Behind the Scenes — Why immutable?** Immutability makes Strings safe to share between different parts of a program and across threads without anyone secretly changing them. It also lets Java cache and reuse common Strings in a special memory area called the **String Pool**, saving memory.
+
+## 9.3 Common String Methods
+
+```java
+String s = "Hello World";
+
+s.length()            // 11  — number of characters
+s.charAt(0)           // 'H' — character at index 0
+s.toUpperCase()       // "HELLO WORLD"
+s.toLowerCase()       // "hello world"
+s.substring(0, 5)     // "Hello" — characters 0 to 4
+s.indexOf("World")    // 6   — where "World" starts
+s.replace("World","Java")  // "Hello Java"
+s.contains("World")   // true
+s.trim()              // removes leading/trailing spaces
+s.split(" ")          // ["Hello", "World"] — splits into an array
+s.isEmpty()           // false
+s.equals("Hello World")  // true — compares CONTENT
+```
+
+## 9.4 Comparing Strings — The Classic Trap
+
+**Never compare Strings with `==`. Use `.equals()`.**
+
+```java
+String a = "hello";
+String b = new String("hello");
+
+a == b          // false! — compares MEMORY ADDRESSES, not text
+a.equals(b)     // true  — compares the actual CONTENT
+```
+
+> **⚠️ Common Mistake:** `==` checks whether two references point to the *same object in memory*. `.equals()` checks whether the *text is the same*. For Strings (and all objects), you almost always want `.equals()`. This bug is so common it's practically a rite of passage.
+
+Use `.equalsIgnoreCase()` when capitalization shouldn't matter:
+```java
+"HELLO".equalsIgnoreCase("hello")   // true
+```
+
+## 9.5 Building Strings Efficiently — StringBuilder
+
+Because Strings are immutable, building one in a loop by concatenating creates tons of throwaway objects — slow and wasteful:
+
+```java
+// ❌ Slow — creates a new String every iteration
+String result = "";
+for (int i = 0; i < 1000; i++) {
+    result += i;   // a new String each time!
+}
+```
+
+Use **`StringBuilder`** instead — it's a *mutable* text buffer designed for this:
+
+```java
+// ✅ Fast — modifies one buffer in place
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) {
+    sb.append(i);
+}
+String result = sb.toString();
+```
+
+> **🧠 Real-Life Analogy:** Concatenating immutable Strings in a loop is like rewriting an entire shopping list from scratch every time you add one item. `StringBuilder` is a **whiteboard** — you just add the new item to the existing list. Far less work.
+
+## 9.6 Text Blocks (Modern Java)
+
+For multi-line text, use a text block (triple quotes) — no more messy `\n`:
+
+```java
+String json = """
+    {
+        "name": "Alice",
+        "age": 30
+    }
+    """;
+```
+
+> **📌 Remember This:** Strings are **immutable** — operations return new Strings. Compare with **`.equals()`**, never `==`. Build strings in loops with **`StringBuilder`**.
+
+---
+
+# SECTION 10 — OOP CORE IDEA
+
+Now we reach the heart of Java. **Object-Oriented Programming (OOP)** is a way of organizing code around **objects** — software models of real-world things. This is *the* reason Java exists, and mastering it is what separates beginners from real developers.
+
+## 10.1 The Central Idea
+
+Instead of writing code as one long list of instructions, OOP says: **model your program as a collection of objects that have data and behavior, and that talk to each other.**
+
+A **class** is a blueprint. An **object** is a real thing built from that blueprint.
+
+> **🧠 Real-Life Analogy:** A **class** is an architect's **blueprint** for a house. It describes what every house *will* have — rooms, doors, a roof. But you can't live in a blueprint. An **object** is an *actual house* built from that blueprint. From one blueprint you can build many houses (objects), each with its own address and paint color, but all sharing the same structure.
+>
+> Another: a class is a **cookie cutter**; objects are the **cookies**. One cutter, many cookies — each a separate cookie, all the same shape.
+
+## 10.2 Class vs Object in Code
+
+```java
+// The CLASS — the blueprint
+class Dog {
+    String name;       // data (what a dog HAS)
+    int age;
+
+    void bark() {      // behavior (what a dog DOES)
+        System.out.println(name + " says Woof!");
+    }
+}
+
+// Creating OBJECTS from the blueprint
+Dog dog1 = new Dog();   // an actual dog
+dog1.name = "Rex";
+dog1.age = 3;
+
+Dog dog2 = new Dog();   // a SEPARATE dog
+dog2.name = "Buddy";
+
+dog1.bark();   // "Rex says Woof!"
+dog2.bark();   // "Buddy says Woof!"
+```
+
+`dog1` and `dog2` are two independent objects. Changing `dog1`'s name doesn't touch `dog2`.
+
+## 10.3 The Four Pillars of OOP
+
+Everything in OOP rests on four big ideas. We'll dedicate a full section to each, but here's the overview:
+
+| Pillar | One-line meaning | Real-life analogy |
+|--------|------------------|-------------------|
+| **Encapsulation** | Bundle data + methods together and hide the internals | A medicine capsule — you take it without seeing the chemistry |
+| **Inheritance** | A class can reuse and extend another class | A child inherits traits from a parent |
+| **Polymorphism** | One action behaves differently for different types | The word "drive" means something different for a car vs a golf ball |
+| **Abstraction** | Show only the essentials, hide the complexity | A car's steering wheel hides the engine's complexity |
+
+> **📌 Remember This:** **Class = blueprint, Object = the real thing built from it.** OOP organizes code around objects that bundle data and behavior. The four pillars are **Encapsulation, Inheritance, Polymorphism, Abstraction** — remember them as **"A PIE"** (Abstraction, Polymorphism, Inheritance, Encapsulation).
+
+---
+
+# SECTION 11 — CLASSES AND OBJECTS
+
+Let's go deeper into how to actually build well-formed classes.
+
+## 11.1 Fields, Methods, and Constructors
+
+A class typically has three kinds of members:
+
+```java
+class Car {
+    // 1. FIELDS — the data (state)
+    String brand;
+    int speed;
+
+    // 2. CONSTRUCTOR — special method that builds the object
+    Car(String brand) {
+        this.brand = brand;
+        this.speed = 0;
+    }
+
+    // 3. METHODS — the behavior
+    void accelerate() {
+        speed += 10;
+    }
+}
+```
+
+## 11.2 The Constructor
+
+A **constructor** is a special method that runs automatically when you create an object with `new`. Its job is to set up the object's initial state. It has the **same name as the class** and **no return type**.
+
+```java
+Car myCar = new Car("Toyota");   // the constructor runs here
+```
+
+> **🧠 Real-Life Analogy:** The constructor is the **assembly line setup** at a car factory. The moment a new car rolls off (when you call `new`), the constructor bolts on the essentials — brand, initial settings — so the object is born ready to use, not half-built.
+
+If you don't write a constructor, Java gives you a free empty one (the "default constructor"). The moment you write your own, the free one disappears.
+
+## 11.3 The `this` Keyword
+
+`this` refers to **the current object** — the specific object the method is running on. It's mainly used to tell apart a field from a parameter with the same name:
+
+```java
+class Person {
+    String name;
+    Person(String name) {
+        this.name = name;   // this.name = the field; name = the parameter
+    }
+}
+```
+
+Without `this`, `name = name` would just assign the parameter to itself and the field would stay empty — a classic silent bug.
+
+## 11.4 Multiple Constructors (Overloading)
+
+You can offer several ways to build an object:
+
+```java
+class Pizza {
+    String size;
+    String topping;
+
+    Pizza() {                          // no info — use defaults
+        this.size = "Medium";
+        this.topping = "Cheese";
+    }
+    Pizza(String size) {               // just size
+        this.size = size;
+        this.topping = "Cheese";
+    }
+    Pizza(String size, String topping) {  // full custom
+        this.size = size;
+        this.topping = topping;
+    }
+}
+```
+
+## 11.5 Static vs Instance Members
+
+This trips up many learners, so let's be crystal clear:
+
+- An **instance** member belongs to *each object*. Every object has its own copy.
+- A **static** member belongs to the *class itself*. There's only one copy, shared by all objects.
+
+```java
+class Counter {
+    static int totalCount = 0;   // shared by ALL Counter objects
+    int id;                       // each object has its own
+
+    Counter() {
+        totalCount++;             // increment the shared counter
+        id = totalCount;          // give this object a unique id
+    }
+}
+
+Counter a = new Counter();   // totalCount = 1, a.id = 1
+Counter b = new Counter();   // totalCount = 2, b.id = 2
+Counter c = new Counter();   // totalCount = 3, c.id = 3
+// Counter.totalCount is now 3 — one shared value
+```
+
+> **🧠 Real-Life Analogy:** Think of a class as a school. Each **student** (object) has their *own* name and grade — those are *instance* fields. But the **school's name** is the same for everyone — that's a *static* field, shared by all. You access static things through the class (`Counter.totalCount`), not through an object.
+
+> **⚠️ Common Mistake:** Trying to use a non-static (instance) field directly inside a static method. A static method belongs to the class and has no specific object, so it can't see object-specific data. That's why `main` (which is static) can't directly touch instance fields without first creating an object.
+
+> **📌 Remember This:** A class has **fields** (data), **methods** (behavior), and **constructors** (setup). `this` = the current object. **Static** = one shared copy on the class; **instance** = one copy per object.
+
+---
+# SECTION 12 — ENCAPSULATION
+
+The first pillar. **Encapsulation** means bundling an object's data and the methods that work on it together, while **hiding the internal details** and controlling access from outside.
+
+## 12.1 The Problem It Solves
+
+Without encapsulation, anyone can reach in and corrupt your object's data:
+
+```java
+class BankAccount {
+    double balance;   // public, exposed
+}
+
+BankAccount acc = new BankAccount();
+acc.balance = -5000;   // 😱 nothing stops this nonsense
+```
+
+A negative balance should be impossible, but nothing prevents it. The object can't protect itself.
+
+## 12.2 The Solution — Private Fields + Public Methods
+
+Make fields `private` (hidden), and expose controlled `public` methods (getters/setters) to access them:
+
+```java
+class BankAccount {
+    private double balance;   // hidden from outside
+
+    public double getBalance() {        // getter — controlled read
+        return balance;
+    }
+
+    public void deposit(double amount) { // controlled write with a RULE
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    public void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {  // can't overdraw
+            balance -= amount;
+        }
+    }
+}
+```
+
+Now the object **enforces its own rules**. You can't set a nonsensical balance directly; you must go through methods that validate.
+
+> **🧠 Real-Life Analogy:** Encapsulation is an **ATM**. You can't open the machine and grab cash directly (the money is `private`). You interact only through approved buttons (`public` methods): check balance, withdraw, deposit. The ATM enforces rules — it won't let you withdraw more than you have. The internal mechanics are hidden and protected.
+>
+> Another: a **medicine capsule** wraps the powder inside a shell. You swallow the capsule and get the benefit without handling the raw chemicals. The complexity is sealed away.
+
+## 12.3 Access Modifiers — Who Can See What
+
+Java has four levels of access, from most open to most restricted:
+
+| Modifier | Visible to | Plain meaning |
+|----------|-----------|---------------|
+| `public` | Everyone, everywhere | Open to all |
+| `protected` | Same package + subclasses | Family + neighbors |
+| *(default)* | Same package only | Just the neighbors |
+| `private` | Same class only | Strictly internal |
+
+> **📌 Remember This:** Encapsulation = **private fields + public methods**. It protects data and lets an object enforce its own rules. The pattern is so standard that IDEs auto-generate getters and setters for you.
+
+> **💡 Behind the Scenes:** Encapsulation isn't just about safety — it gives you *freedom to change*. Because outsiders only touch your public methods, you can completely rewrite the private internals (change how balance is stored, add logging, switch databases) without breaking any code that uses your class. The public surface is a stable contract.
+
+---
+
+# SECTION 13 — INHERITANCE
+
+The second pillar. **Inheritance** lets one class acquire the fields and methods of another, so you can reuse code and build hierarchies of related types.
+
+## 13.1 The Basic Idea
+
+A class can **extend** another, inheriting everything it has and adding its own extras:
+
+```java
+// PARENT class (also called superclass / base class)
+class Animal {
+    String name;
+    void eat() {
+        System.out.println(name + " is eating.");
+    }
+    void sleep() {
+        System.out.println(name + " is sleeping.");
+    }
+}
+
+// CHILD class (subclass / derived class)
+class Dog extends Animal {     // Dog inherits everything from Animal
+    void bark() {              // and adds its own behavior
+        System.out.println(name + " says Woof!");
+    }
+}
+```
+
+Now a `Dog` automatically has `name`, `eat()`, and `sleep()` *plus* its own `bark()`:
+
+```java
+Dog d = new Dog();
+d.name = "Rex";
+d.eat();    // inherited from Animal → "Rex is eating."
+d.bark();   // Dog's own         → "Rex says Woof!"
+```
+
+> **🧠 Real-Life Analogy:** Inheritance is exactly like **family traits**. A child inherits eye color and surname from their parents (the shared `Animal` features), but also has their own unique personality (the `Dog`-specific `bark`). You don't re-describe "has eyes, has a name" for every child — they get it from the parent automatically.
+
+## 13.2 Why Inheritance Is Useful
+
+Imagine modeling Dog, Cat, and Cow. All of them eat and sleep. Without inheritance, you'd copy `eat()` and `sleep()` into all three. With inheritance, you write those once in `Animal` and every subclass gets them free. **Write once, reuse everywhere** — and fix bugs in one place.
+
+## 13.3 The `super` Keyword
+
+`super` refers to the **parent class**. It's used to call the parent's constructor or methods:
+
+```java
+class Animal {
+    String name;
+    Animal(String name) {
+        this.name = name;
+    }
+    void describe() {
+        System.out.println("I am an animal named " + name);
+    }
+}
+
+class Dog extends Animal {
+    String breed;
+    Dog(String name, String breed) {
+        super(name);          // call the parent's constructor first
+        this.breed = breed;
+    }
+    void describe() {
+        super.describe();     // run the parent's version too
+        System.out.println("I am a " + breed);
+    }
+}
+```
+
+> **💡 Behind the Scenes:** When you create a `Dog`, the `Animal` part is built *first*, then the `Dog` part. That's why a subclass constructor calls `super(...)` before anything else — the parent foundation must exist before the child can be built on top. If you don't write `super(...)`, Java automatically inserts a call to the parent's no-arg constructor.
+
+## 13.4 Method Overriding
+
+A subclass can **replace** an inherited method with its own version. This is called **overriding** (different from *overloading*!):
+
+```java
+class Animal {
+    void makeSound() {
+        System.out.println("Some generic sound");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void makeSound() {                 // same signature, new body
+        System.out.println("Meow");
+    }
+}
+```
+
+The `@Override` annotation isn't required, but always use it — it tells the compiler "I mean to override," so if you mistype the method name, you get an error instead of a silent bug.
+
+> **⚠️ Common Mistake — Overloading vs Overriding:**
+> - **Overriding** = *same* method signature, in a *subclass*, *replacing* behavior. (Runtime — which version runs depends on the actual object.)
+> - **Overloading** = *same name*, *different parameters*, in the *same class*. (Compile-time — chosen by the arguments.)
+>
+> They sound alike but are completely different mechanisms.
+
+## 13.5 Java Has No Multiple Inheritance (for classes)
+
+A class can extend **only one** parent class. You can't do `class C extends A, B`. This avoids the famous "diamond problem" (ambiguity when two parents define the same method). Java solves the need for multiple inheritance through **interfaces** instead (Section 15).
+
+> **🧠 Real-Life Analogy:** You have exactly **one biological mother and father** lineage in this model — a class has one parent. But you can learn many *skills* (interfaces) from many teachers. Inheritance is your bloodline (one); interfaces are your skill set (many).
+
+> **📌 Remember This:** `extends` = inherit. Subclass gets the parent's fields + methods, adds its own. `super` calls the parent. **Overriding** replaces a method (`@Override`); **overloading** is same-name-different-params. A class extends only **one** class.
+
+---
+
+# SECTION 14 — POLYMORPHISM
+
+The third pillar, and the one that makes OOP truly powerful. **Polymorphism** means "many forms" — the *same* method call can produce *different* behavior depending on the actual object.
+
+## 14.1 The Core Idea
+
+A parent-type variable can hold any subclass object, and when you call a method, **Java runs the version belonging to the actual object**, not the variable's declared type:
+
+```java
+class Animal {
+    void makeSound() { System.out.println("Some sound"); }
+}
+class Dog extends Animal {
+    void makeSound() { System.out.println("Woof"); }
+}
+class Cat extends Animal {
+    void makeSound() { System.out.println("Meow"); }
+}
+
+Animal a;            // a variable of the PARENT type
+
+a = new Dog();
+a.makeSound();       // "Woof"  — runs Dog's version
+
+a = new Cat();
+a.makeSound();       // "Meow"  — runs Cat's version
+```
+
+Same line `a.makeSound()`, different results — decided by *what `a` actually is* at runtime.
+
+> **🧠 Real-Life Analogy:** Think of a **universal remote's "play" button**. You press the same button ("play"), but the result depends on the device — a DVD player spins a disc, Spotify streams a song, YouTube loads a video. One action, many forms. The button doesn't need to know the device's internals; each device knows how to "play" itself.
+
+## 14.2 Why This Is So Powerful
+
+Polymorphism lets you write code that works with the *general* type and automatically handles every specific type — even ones invented later:
+
+```java
+Animal[] zoo = { new Dog(), new Cat(), new Dog() };
+
+for (Animal animal : zoo) {
+    animal.makeSound();   // each animal makes ITS OWN sound
+}
+// Output: Woof, Meow, Woof
+```
+
+The loop doesn't care whether each animal is a Dog or Cat. If you add a `Cow` class tomorrow, this loop works *without any changes*. That's the magic: **you program to the general type, and the specific behavior takes care of itself.**
+
+> **💡 Behind the Scenes — Dynamic Dispatch:** How does Java know to call Dog's `makeSound` and not Animal's? At runtime, every object carries a hidden pointer to its class's method table. When you call `makeSound()`, the JVM looks up the *actual object's* table and calls that version. This runtime decision is called **dynamic method dispatch**, and it's the engine of polymorphism.
+
+## 14.3 Two Kinds of Polymorphism
+
+| Type | Also called | When decided | How |
+|------|-------------|--------------|-----|
+| **Runtime polymorphism** | Method overriding | At runtime | Subclass overrides a parent method |
+| **Compile-time polymorphism** | Method overloading | At compile time | Same method name, different parameters |
+
+When people say "polymorphism" in interviews, they usually mean the **runtime** kind (overriding) — that's the powerful one.
+
+## 14.4 Upcasting and Downcasting
+
+```java
+Animal a = new Dog();    // upcasting — treat a Dog as an Animal (always safe)
+
+Dog d = (Dog) a;         // downcasting — treat the Animal back as a Dog
+                         // (only safe if it really IS a Dog)
+```
+
+Check before downcasting to avoid a crash:
+```java
+if (a instanceof Dog) {
+    Dog d = (Dog) a;
+    d.bark();
+}
+```
+
+Modern Java (16+) simplifies this with **pattern matching**:
+```java
+if (a instanceof Dog d) {   // checks AND casts in one step
+    d.bark();
+}
+```
+
+> **📌 Remember This:** Polymorphism = one call, many behaviors, decided by the **actual object** at runtime (dynamic dispatch). It lets you write flexible code against parent types that automatically handles all subtypes — including future ones. Overriding = runtime; overloading = compile-time.
+
+---
+# SECTION 15 — ABSTRACTION
+
+The fourth pillar. **Abstraction** means hiding complex implementation details and exposing only what's necessary — the *what*, not the *how*. Java gives you two tools for this: **abstract classes** and **interfaces**.
+
+## 15.1 The Idea
+
+When you drive a car, you use the steering wheel, pedals, and gear stick. You don't think about fuel injection, spark timing, or torque curves. The car *abstracts* that complexity away behind a simple interface.
+
+> **🧠 Real-Life Analogy:** A **TV remote** is pure abstraction. The button says "volume up." Behind it lies infrared signaling, circuit boards, and amplifier logic — but you don't care and don't need to. You're given a simple control surface; the messy details are hidden. Good code works the same way: expose simple methods, hide the machinery.
+
+## 15.2 Abstract Classes
+
+An **abstract class** is a partially-complete blueprint. It can have:
+- regular methods (with code),
+- **abstract methods** (just a signature, no body — subclasses *must* fill them in).
+
+You cannot create an object directly from an abstract class — it's incomplete on purpose.
+
+```java
+abstract class Shape {
+    abstract double area();      // no body — every shape computes area differently
+
+    void describe() {            // a normal, shared method
+        System.out.println("This shape has area: " + area());
+    }
+}
+
+class Circle extends Shape {
+    double radius;
+    Circle(double radius) { this.radius = radius; }
+
+    @Override
+    double area() {              // Circle MUST provide this
+        return 3.14159 * radius * radius;
+    }
+}
+
+class Rectangle extends Shape {
+    double w, h;
+    Rectangle(double w, double h) { this.w = w; this.h = h; }
+
+    @Override
+    double area() {
+        return w * h;
+    }
+}
+```
+
+```java
+Shape s = new Circle(5);
+s.describe();   // "This shape has area: 78.5..."
+// Shape s = new Shape();  // ❌ ERROR — can't instantiate an abstract class
+```
+
+The `Shape` class says "every shape *has* an area, but I won't say how — each specific shape decides." That's abstraction: defining a contract while leaving details to subclasses.
+
+## 15.3 Interfaces
+
+An **interface** is a pure contract — a list of methods a class promises to provide, with no implementation (traditionally). It defines *what* a class can do, not *how*.
+
+```java
+interface Drawable {
+    void draw();          // any Drawable MUST have a draw() method
+}
+
+interface Resizable {
+    void resize(double factor);
+}
+
+class Button implements Drawable, Resizable {   // can implement MANY interfaces
+    public void draw() {
+        System.out.println("Drawing a button");
+    }
+    public void resize(double factor) {
+        System.out.println("Resizing button by " + factor);
+    }
+}
+```
+
+> **🧠 Real-Life Analogy:** An interface is like a **job description** or a **power socket standard**. The socket says "provide 230V at these two holes." It doesn't care whether the electricity comes from coal, solar, or wind — any provider that meets the contract works. Any appliance built to the standard plugs in. Interfaces let unrelated classes work together as long as they honor the same contract.
+
+## 15.4 The Key Power — Multiple Interfaces
+
+Remember a class can extend only *one* class? But it can **implement many interfaces**. This is how Java achieves the flexibility of multiple inheritance safely:
+
+```java
+class SmartPhone implements Camera, Phone, GPS, MusicPlayer {
+    // must provide all methods from all four contracts
+}
+```
+
+A smartphone *is many things at once* — a camera, a phone, a GPS, a music player. Interfaces model that perfectly.
+
+## 15.5 Abstract Class vs Interface — When to Use Which
+
+| | Abstract Class | Interface |
+|---|----------------|-----------|
+| Purpose | "is-a" with shared code | "can-do" capability/contract |
+| Methods | Can have both concrete & abstract | Mostly abstract (default methods allowed since Java 8) |
+| Fields | Can have normal fields/state | Only constants |
+| Inheritance | A class extends **one** | A class implements **many** |
+| Use when | Subclasses share common code & state | Unrelated classes share a capability |
+
+A simple guide: if you want to share *code and state* among closely related classes, use an **abstract class**. If you want to define a *capability* that many unrelated classes can have, use an **interface**.
+
+## 15.6 Modern Interfaces — Default Methods
+
+Since Java 8, interfaces can include `default` methods *with* a body, so you can add new methods without breaking existing classes:
+
+```java
+interface Vehicle {
+    void start();
+    default void honk() {            // has a body; classes get it free
+        System.out.println("Beep beep!");
+    }
+}
+```
+
+> **📌 Remember This:** Abstraction hides the *how*, shows the *what*. **Abstract class** = partial blueprint with shared code, extend one. **Interface** = pure capability contract, implement many. Use interfaces for "can-do" abilities across unrelated types.
+
+---
+
+# SECTION 16 — EXCEPTION HANDLING
+
+Programs encounter problems: a file is missing, the network drops, a user types letters where numbers belong, you divide by zero. **Exceptions** are Java's structured way to detect, signal, and recover from these errors without crashing.
+
+## 16.1 What an Exception Is
+
+An **exception** is an object that represents a problem that occurred during execution. When something goes wrong, Java "throws" an exception. If nobody "catches" it, the program crashes and prints a stack trace.
+
+```java
+int[] arr = {1, 2, 3};
+System.out.println(arr[10]);   // throws ArrayIndexOutOfBoundsException
+// Program crashes here if not handled
+```
+
+> **🧠 Real-Life Analogy:** An exception is a **smoke alarm**. When something goes wrong (smoke), it goes off (throws). You can either ignore it and let the house burn down (program crashes), or respond to it — grab the extinguisher, call for help (catch and handle). Exception handling is your fire-response plan.
+
+## 16.2 try-catch — Catching Problems
+
+Wrap risky code in `try`, and handle the problem in `catch`:
+
+```java
+try {
+    int result = 10 / 0;        // risky — throws ArithmeticException
+    System.out.println(result);
+} catch (ArithmeticException e) {
+    System.out.println("Can't divide by zero!");
+}
+// Program CONTINUES instead of crashing
+```
+
+The flow: Java runs the `try` block. If an exception occurs, it *immediately* jumps to the matching `catch` block. If no exception occurs, `catch` is skipped entirely.
+
+## 16.3 The Full Structure — try-catch-finally
+
+```java
+try {
+    // risky code
+} catch (SpecificException e) {
+    // handle that specific problem
+} catch (AnotherException e) {
+    // handle a different problem
+} finally {
+    // ALWAYS runs — whether or not there was an exception
+    // perfect for cleanup: closing files, connections
+}
+```
+
+The **`finally`** block runs no matter what — success, failure, even if you `return` inside the `try`. It's where you put cleanup code that *must* happen.
+
+> **🧠 Real-Life Analogy:** `finally` is like **turning off the stove**. Whether your cooking succeeded (great dinner) or failed (burnt it), you *always* turn off the stove before leaving the kitchen. Cleanup that must happen regardless of outcome goes in `finally`.
+
+## 16.4 The Exception Hierarchy
+
+All errors descend from `Throwable`, which splits into two branches:
+
+```mermaid
+flowchart TD
+    T["Throwable"] --> E["Error<br/>(serious JVM problems —<br/>don't catch these)"]
+    T --> Ex["Exception"]
+    Ex --> RE["RuntimeException<br/>(unchecked)"]
+    Ex --> CE["Checked Exceptions<br/>(IOException, SQLException...)"]
+    RE --> NPE["NullPointerException"]
+    RE --> AIOOBE["ArrayIndexOutOfBounds"]
+    RE --> AE["ArithmeticException"]
+```
+
+- **`Error`** — catastrophic problems (out of memory, JVM crash). You don't handle these.
+- **`Exception`** — problems your program can reasonably handle. This splits further:
+
+## 16.5 Checked vs Unchecked Exceptions
+
+This is a favorite interview topic:
+
+| | Checked | Unchecked (RuntimeException) |
+|---|---------|------------------------------|
+| Checked by compiler? | **Yes** — must handle or declare | No |
+| Examples | `IOException`, `SQLException` | `NullPointerException`, `ArithmeticException` |
+| Cause | External issues (files, network) | Programming bugs |
+| Forces try-catch? | Yes, or `throws` | No |
+
+> **💡 Behind the Scenes:** **Checked** exceptions are things outside your control that you *should* plan for — a file might not exist, a network might fail. Java forces you to deal with them. **Unchecked** exceptions usually mean a *bug* — you accessed a null, you indexed past an array. The fix isn't to catch them, it's to fix the code.
+
+## 16.6 throw and throws
+
+- **`throw`** — actually throw an exception (an action):
+```java
+if (age < 0) {
+    throw new IllegalArgumentException("Age cannot be negative");
+}
+```
+- **`throws`** — declare that a method *might* throw something (a warning label):
+```java
+void readFile(String path) throws IOException {
+    // ...
+}
+```
+
+## 16.7 try-with-resources — Auto-Cleanup
+
+When working with files or connections, use try-with-resources to **close them automatically**:
+
+```java
+try (BufferedReader reader = new BufferedReader(new FileReader("data.txt"))) {
+    System.out.println(reader.readLine());
+}   // reader is closed automatically, even if an exception occurs
+```
+
+No `finally` needed — Java closes the resource for you. This is the modern, safe way.
+
+## 16.8 The #1 Exception You'll Meet — NullPointerException
+
+A `NullPointerException` (NPE) happens when you call a method or access a field on a variable that is `null` (points to nothing):
+
+```java
+String name = null;
+name.length();   // 💥 NullPointerException — name points to nothing
+```
+
+> **⚠️ Common Mistake:** The NPE is the most common runtime error in Java. Guard against it: check for null (`if (name != null)`), or use `Optional` (Section 23) to make "might be absent" explicit. Never assume a value exists — especially data from outside your program.
+
+> **📌 Remember This:** `try` risky code, `catch` problems, `finally` always cleans up (or use try-with-resources). **Checked** = compiler-enforced, external causes; **unchecked** = bugs. `throw` an exception; `throws` declares one. Watch for the **NullPointerException** — it's the most common of all.
+
+---
+# SECTION 17 — COLLECTIONS FRAMEWORK
+
+Arrays are fixed-size and clumsy. Real programs need containers that **grow, shrink, sort, and search** with ease. The **Collections Framework** is Java's set of ready-made, battle-tested data structures. Learning it well is one of the biggest jumps in real-world productivity.
+
+## 17.1 The Big Picture
+
+Everything sits under a few core interfaces:
+
+```mermaid
+flowchart TD
+    C["Collection"] --> L["List<br/>ordered, duplicates OK"]
+    C --> S["Set<br/>no duplicates"]
+    C --> Q["Queue<br/>first-in-first-out"]
+    M["Map<br/>key → value pairs<br/>(separate hierarchy)"]
+    L --> AL["ArrayList"]
+    L --> LL["LinkedList"]
+    S --> HS["HashSet"]
+    S --> TS["TreeSet"]
+    M --> HM["HashMap"]
+    M --> TM["TreeMap"]
+```
+
+The three you'll use 90% of the time: **`ArrayList`**, **`HashMap`**, and **`HashSet`**.
+
+## 17.2 List — Ordered, Allows Duplicates
+
+A `List` is like a smart, resizable array. The go-to implementation is **`ArrayList`**:
+
+```java
+List<String> fruits = new ArrayList<>();
+fruits.add("Apple");
+fruits.add("Banana");
+fruits.add("Apple");        // duplicates allowed
+
+fruits.get(0);              // "Apple" — access by index
+fruits.size();              // 3
+fruits.remove("Banana");
+fruits.contains("Apple");   // true
+
+for (String fruit : fruits) {
+    System.out.println(fruit);
+}
+```
+
+> **🧠 Real-Life Analogy:** An `ArrayList` is a **shopping list** on your phone. You add items in order, you can have "milk" twice, you can check item #1, cross things off, and it grows as long as you need. Unlike a paper list (a fixed array), it never runs out of space.
+
+**ArrayList vs LinkedList:**
+
+| | ArrayList | LinkedList |
+|---|-----------|------------|
+| Internally | A resizable array | A chain of connected nodes |
+| Access by index | **Fast** (direct jump) | Slow (walk the chain) |
+| Insert/remove in middle | Slow (shift elements) | Fast (relink nodes) |
+| Use when | You mostly read/access | You mostly insert/remove |
+
+Default to `ArrayList` unless you have lots of insertions/removals in the middle.
+
+## 17.3 Set — No Duplicates
+
+A `Set` automatically rejects duplicates. Use it when uniqueness matters:
+
+```java
+Set<String> emails = new HashSet<>();
+emails.add("a@x.com");
+emails.add("b@x.com");
+emails.add("a@x.com");      // ignored — already present
+System.out.println(emails.size());   // 2, not 3
+```
+
+> **🧠 Real-Life Analogy:** A `Set` is the **guest list** for a party. Adding the same person twice doesn't make two of them — there's still just one. Perfect for "unique things only": unique visitors, distinct tags, seen IDs.
+
+- **`HashSet`** — fastest, but no order.
+- **`TreeSet`** — keeps elements sorted automatically.
+- **`LinkedHashSet`** — keeps insertion order.
+
+## 17.4 Map — Key-Value Pairs
+
+A `Map` stores pairs: each unique **key** maps to a **value**. The workhorse is **`HashMap`**:
+
+```java
+Map<String, Integer> ages = new HashMap<>();
+ages.put("Alice", 30);
+ages.put("Bob", 25);
+ages.put("Alice", 31);      // overwrites Alice's value
+
+ages.get("Alice");          // 31
+ages.containsKey("Bob");    // true
+ages.getOrDefault("Zoe", 0); // 0 — safe default if missing
+
+for (Map.Entry<String, Integer> entry : ages.entrySet()) {
+    System.out.println(entry.getKey() + " is " + entry.getValue());
+}
+```
+
+> **🧠 Real-Life Analogy:** A `Map` is a **dictionary** or a **phone book**. You look up a *word* (key) to get its *definition* (value). Each word appears once. You don't scan every page — you jump straight to the entry. That instant lookup is a `HashMap`'s superpower.
+
+> **💡 Behind the Scenes — How HashMap finds things instantly:** When you `put` a key, Java computes its **hash code** (a number derived from the key) and uses it to decide *which bucket* to store the pair in. On `get`, it computes the hash again and jumps straight to that bucket — no scanning. This is why lookups are near-instant (O(1)) regardless of size. It's also why keys used in a HashMap should have proper `hashCode()` and `equals()` methods.
+
+## 17.5 Queue — First In, First Out
+
+A `Queue` processes items in arrival order, like a line at a counter:
+
+```java
+Queue<String> queue = new LinkedList<>();
+queue.offer("First");
+queue.offer("Second");
+queue.poll();   // removes and returns "First"
+```
+
+> **🧠 Real-Life Analogy:** A `Queue` is a **checkout line** — first come, first served (FIFO). A `Stack` (its cousin) is a **stack of plates** — last one on is first one off (LIFO).
+
+## 17.6 Choosing the Right Collection
+
+| Need | Use |
+|------|-----|
+| Ordered list, allow duplicates, access by index | `ArrayList` |
+| Unique items, fast lookup | `HashSet` |
+| Unique items, kept sorted | `TreeSet` |
+| Key→value lookup | `HashMap` |
+| Key→value, kept sorted by key | `TreeMap` |
+| Process in arrival order | `LinkedList` (as Queue) |
+
+> **📌 Remember This:** **List** = ordered + duplicates (`ArrayList`). **Set** = unique (`HashSet`). **Map** = key→value (`HashMap`). **Queue** = FIFO. HashMap/HashSet are near-instant thanks to hashing. These three — ArrayList, HashMap, HashSet — cover most daily work.
+
+---
+
+# SECTION 18 — GENERICS
+
+You saw `<String>` and `<String, Integer>` above. Those angle brackets are **generics** — a way to make a class or method work with *any type* while staying **type-safe**.
+
+## 18.1 The Problem Generics Solve
+
+Before generics, collections held plain `Object`, so anything could go in — and you had to cast on the way out, risking crashes:
+
+```java
+// Old, unsafe way (pre-generics)
+List list = new ArrayList();
+list.add("hello");
+list.add(42);                       // oops, mixed types — compiler allows it
+String s = (String) list.get(1);    // 💥 ClashCastException at runtime!
+```
+
+With generics, you tell the compiler *exactly* what type the list holds, and it enforces it:
+
+```java
+List<String> list = new ArrayList<>();
+list.add("hello");
+list.add(42);          // ❌ compile error — caught immediately!
+String s = list.get(0); // no cast needed, guaranteed to be a String
+```
+
+> **🧠 Real-Life Analogy:** Generics are like **labeled, shaped containers**. A jar labeled "Cookies — round" only accepts round cookies, and you *know* whatever you pull out is a round cookie. Without the label, it's a mystery box — you reach in hoping for a cookie and might pull out a screwdriver (a runtime crash). The label moves the mistake from "discover it painfully later" to "the compiler stops you now."
+
+## 18.2 Writing a Generic Class
+
+The `<T>` is a placeholder for "some type, decided when used":
+
+```java
+class Box<T> {              // T is a type parameter
+    private T item;
+
+    public void put(T item) { this.item = item; }
+    public T get() { return item; }
+}
+
+Box<String> stringBox = new Box<>();
+stringBox.put("Hello");
+String s = stringBox.get();   // returns a String, no cast
+
+Box<Integer> intBox = new Box<>();
+intBox.put(42);
+int n = intBox.get();         // returns an Integer
+```
+
+One `Box` class works safely with *any* type. `T` becomes whatever you specify.
+
+By convention, single-letter names are used: `T` (Type), `E` (Element), `K` (Key), `V` (Value), `N` (Number).
+
+## 18.3 Generic Methods
+
+A single method can be generic too:
+
+```java
+public static <T> void printArray(T[] array) {
+    for (T element : array) {
+        System.out.println(element);
+    }
+}
+
+printArray(new String[]{"a", "b"});    // works with Strings
+printArray(new Integer[]{1, 2, 3});    // works with Integers
+```
+
+## 18.4 Bounded Types — Restricting What's Allowed
+
+You can require the type to be a subclass of something using `extends`:
+
+```java
+// T must be a Number (or subclass: Integer, Double, etc.)
+public static <T extends Number> double sum(List<T> list) {
+    double total = 0;
+    for (T num : list) {
+        total += num.doubleValue();   // safe — we KNOW it's a Number
+    }
+    return total;
+}
+```
+
+Because `T extends Number`, the compiler knows every `T` has number methods like `doubleValue()`.
+
+## 18.5 Wildcards
+
+`?` means "some unknown type." Useful when you accept many possibilities:
+
+```java
+List<?> anyList;                    // a list of some type
+List<? extends Number> numbers;     // some type that IS a Number
+List<? super Integer> ints;         // Integer or a parent type
+```
+
+These get advanced; the key takeaway for now is that generics let library authors write flexible-yet-safe APIs.
+
+> **💡 Behind the Scenes — Type Erasure:** Generics exist only at *compile time*. After the compiler checks your types, it **erases** them — at runtime, `List<String>` and `List<Integer>` are both just `List`. This is called type erasure, kept for backward compatibility with old code. It's why you can't do `new T()` or check `if (x instanceof List<String>)` — that information is gone by runtime.
+
+> **📌 Remember This:** Generics = type safety + reuse. `<T>` is a placeholder filled when used; the compiler then enforces it, catching type errors *early* and removing casts. `extends` bounds a type; `?` is a wildcard. At runtime, generic info is erased.
+
+---
+# SECTION 19 — FUNCTIONAL PROGRAMMING
+
+Java 8 (2014) introduced a more expressive style: treating **functions as values** you can pass around. Combined with **streams**, this lets you process data in a clean, readable, declarative way. This is where Java code starts to feel modern.
+
+## 19.1 Lambda Expressions
+
+A **lambda** is a short, anonymous function — a block of behavior you can store in a variable or pass to a method, without writing a whole class.
+
+Compare the old way and the lambda way of sorting:
+
+```java
+// Old way — a clunky anonymous class
+Collections.sort(names, new Comparator<String>() {
+    public int compare(String a, String b) {
+        return a.compareTo(b);
+    }
+});
+
+// Lambda way — same thing, far cleaner
+Collections.sort(names, (a, b) -> a.compareTo(b));
+```
+
+The syntax is `(parameters) -> { body }`:
+
+```java
+() -> System.out.println("Hi")        // no parameters
+x -> x * x                            // one parameter, returns x²
+(a, b) -> a + b                       // two parameters
+(int a, int b) -> { return a + b; }   // explicit types + block body
+```
+
+> **🧠 Real-Life Analogy:** A lambda is like **texting someone a quick instruction** instead of mailing a formal letter. Before lambdas, to pass behavior you had to write a whole class (a formal, multi-page letter). A lambda is the text message: "sort these by name" — short, direct, gets the job done. Same meaning, far less ceremony.
+
+## 19.2 Functional Interfaces
+
+A lambda works with any **functional interface** — an interface with exactly *one* abstract method. Java provides several ready-made ones:
+
+```java
+// Predicate<T> — takes a value, returns true/false
+Predicate<Integer> isEven = n -> n % 2 == 0;
+isEven.test(4);   // true
+
+// Function<T,R> — takes a T, returns an R
+Function<String, Integer> length = s -> s.length();
+length.apply("hello");   // 5
+
+// Consumer<T> — takes a value, returns nothing (does something with it)
+Consumer<String> printer = s -> System.out.println(s);
+printer.accept("Hi");
+
+// Supplier<T> — takes nothing, supplies a value
+Supplier<Double> random = () -> Math.random();
+random.get();
+```
+
+## 19.3 Streams — Processing Data Like a Pipeline
+
+A **Stream** lets you process a collection through a chain of operations — filter, transform, collect — reading almost like a sentence. This is the single most loved feature of modern Java.
+
+The classic problem: "from these numbers, take the even ones, double them, and collect the results."
+
+```java
+// Old way — manual loop
+List<Integer> result = new ArrayList<>();
+for (Integer n : numbers) {
+    if (n % 2 == 0) {
+        result.add(n * 2);
+    }
+}
+
+// Stream way — a clear pipeline
+List<Integer> result = numbers.stream()
+    .filter(n -> n % 2 == 0)    // keep evens
+    .map(n -> n * 2)            // double each
+    .collect(Collectors.toList());  // gather into a list
+```
+
+> **🧠 Real-Life Analogy:** A stream is a **factory assembly line**. Raw items go in one end. Each station does one job — one inspects and removes bad items (`filter`), the next paints them (`map`), the next packs them into a box (`collect`). Items flow through the stations one after another, and a finished product comes out the end. You describe the *stations*, not the manual labor of moving each item.
+
+## 19.4 Common Stream Operations
+
+Streams have two kinds of operations: **intermediate** (return another stream, lazy) and **terminal** (produce a result, trigger the work).
+
+```java
+List<String> names = List.of("Alice", "Bob", "Charlie", "Anna");
+
+// filter — keep matching elements
+names.stream().filter(n -> n.startsWith("A"))      // Alice, Anna
+
+// map — transform each element
+names.stream().map(String::toUpperCase)            // ALICE, BOB, ...
+
+// sorted — order them
+names.stream().sorted()                            // Alice, Anna, Bob, Charlie
+
+// count — how many
+names.stream().filter(n -> n.length() > 3).count()  // 3
+
+// collect to a list
+.collect(Collectors.toList())
+
+// reduce — combine into one value
+List.of(1,2,3,4).stream().reduce(0, (a, b) -> a + b);  // 10 (sum)
+
+// forEach — do something with each
+names.stream().forEach(System.out::println);
+```
+
+## 19.5 Method References — Even Shorter Lambdas
+
+When a lambda just calls one existing method, you can shorten it with `::`:
+
+```java
+names.stream().map(s -> s.toUpperCase())   // lambda
+names.stream().map(String::toUpperCase)    // method reference — same thing
+
+names.forEach(s -> System.out.println(s))  // lambda
+names.forEach(System.out::println)         // method reference
+```
+
+## 19.6 Optional — Handling "Maybe No Value"
+
+`Optional` is a box that may or may not contain a value — a clean alternative to returning `null` and risking NullPointerExceptions:
+
+```java
+Optional<String> found = names.stream()
+    .filter(n -> n.startsWith("Z"))
+    .findFirst();
+
+found.ifPresent(System.out::println);          // runs only if present
+String name = found.orElse("No match");        // default if absent
+```
+
+> **💡 Behind the Scenes:** Streams are **lazy**. Intermediate operations like `filter` and `map` don't actually run until a *terminal* operation (`collect`, `count`, `forEach`) is called. Java then fuses the whole pipeline and processes elements in a single pass — efficient, not one full loop per step. You can also write `.parallelStream()` to spread the work across CPU cores automatically.
+
+> **📌 Remember This:** A **lambda** `(x) -> ...` is behavior-as-a-value. **Streams** process collections as a readable pipeline: `filter` (keep), `map` (transform), `collect`/`reduce` (gather). Use **method references** (`::`) to shorten, and **Optional** to avoid nulls.
+
+---
+
+# SECTION 20 — MULTITHREADING AND CONCURRENCY
+
+By default a program runs on one thread — one worker doing one thing at a time. **Multithreading** lets your program do several things *at once*, using multiple workers. This is essential for responsive apps and servers handling many users.
+
+## 20.1 What a Thread Is
+
+A **thread** is an independent path of execution within your program. The "main thread" runs your `main` method; you can spawn more threads to run other work simultaneously.
+
+> **🧠 Real-Life Analogy:** A single-threaded program is **one cook** in a kitchen doing every task in order — chop, then boil, then fry. Multithreading is **hiring several cooks**: one chops while another boils while a third fries. The meal comes out faster. But now they share one kitchen, so they must coordinate — and that coordination is where the difficulty lies.
+
+## 20.2 Creating Threads
+
+**Way 1 — implement `Runnable` (preferred):**
+```java
+Runnable task = () -> {
+    for (int i = 0; i < 5; i++) {
+        System.out.println("Working: " + i);
+    }
+};
+Thread thread = new Thread(task);
+thread.start();   // runs the task on a NEW thread
+```
+
+**Way 2 — extend `Thread`:**
+```java
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Running in a thread");
+    }
+}
+new MyThread().start();
+```
+
+> **⚠️ Common Mistake:** Calling `run()` instead of `start()`. `run()` just executes the code on the *current* thread (no concurrency). `start()` creates a *new* thread and then runs it. Always call `start()`.
+
+## 20.3 The Core Problem — Shared Data (Race Conditions)
+
+When multiple threads change the same data at the same time, results become unpredictable:
+
+```java
+class Counter {
+    int count = 0;
+    void increment() { count++; }   // NOT thread-safe!
+}
+```
+
+`count++` looks like one step but is actually three: *read* count, *add* 1, *write* back. If two threads do this at once, they can read the same value and both write back the same result — losing an increment. This is a **race condition**.
+
+> **🧠 Real-Life Analogy:** Two people editing the **same shared Google Doc** at the exact same instant, both starting from "total: 10." Each adds 1 and saves "11." You expected 12, but got 11 — one edit was lost. That's a race condition: the final result depends on the unlucky timing of who writes when.
+
+## 20.4 The Solution — Synchronization
+
+`synchronized` ensures only **one thread at a time** can run a piece of code:
+
+```java
+class Counter {
+    private int count = 0;
+    public synchronized void increment() {   // only one thread at a time
+        count++;
+    }
+}
+```
+
+> **🧠 Real-Life Analogy:** `synchronized` is the **single key to a bathroom**. Only the person holding the key can enter; everyone else waits outside. When they're done, they hand the key over. This guarantees no two people are inside at once — no collisions. The downside: people wait in line, which can slow things down.
+
+## 20.5 Other Coordination Tools
+
+- **`volatile`** — guarantees all threads see the latest value of a variable (no stale cached copies).
+- **`Atomic` classes** (`AtomicInteger`) — do thread-safe operations without explicit locking:
+```java
+AtomicInteger count = new AtomicInteger(0);
+count.incrementAndGet();   // safe, no synchronized needed
+```
+- **Locks** (`ReentrantLock`) — more flexible than `synchronized` for advanced cases.
+
+## 20.6 Don't Manage Threads by Hand — Use a Thread Pool
+
+Creating a new thread for every task is expensive. An **ExecutorService** manages a reusable pool of threads for you:
+
+```java
+ExecutorService pool = Executors.newFixedThreadPool(4);  // 4 reusable workers
+
+for (int i = 0; i < 10; i++) {
+    int taskId = i;
+    pool.submit(() -> System.out.println("Task " + taskId));
+}
+pool.shutdown();
+```
+
+> **🧠 Real-Life Analogy:** A thread pool is a **team of employees on shift**. Instead of hiring and firing a new worker for every single task (slow and wasteful), you keep a fixed team. Tasks come into a queue; whenever a worker is free, they grab the next one. Reuse beats constant hiring.
+
+## 20.7 Deadlock — The Classic Trap
+
+A **deadlock** is when two threads each wait forever for a resource the other holds:
+
+> **🧠 Real-Life Analogy:** Two people at a dinner table, each needs *both* forks to eat. Person A grabs the left fork; Person B grabs the right fork. Now each waits for the other to release a fork — forever. Neither eats. That's a deadlock: a circular wait where nobody can proceed.
+
+Avoid it by always acquiring locks in the *same order*, or using timeouts.
+
+## 20.8 Virtual Threads (Modern Java)
+
+Java 21 introduced **virtual threads** — extremely lightweight threads. You can have *millions* of them, so you can write simple blocking code that still scales massively for I/O-heavy work:
+
+```java
+Thread.startVirtualThread(() -> {
+    System.out.println("Running in a virtual thread");
+});
+```
+
+This is one of the biggest recent changes in Java — it makes high-concurrency servers far simpler to write.
+
+> **📌 Remember This:** A **thread** is an independent worker. Shared mutable data causes **race conditions** — fix with `synchronized`, `Atomic`, or `volatile`. Use an **ExecutorService** (thread pool) instead of raw threads. Beware **deadlocks** (circular waiting). **Virtual threads** (Java 21+) make massive concurrency easy.
+
+---
+# SECTION 21 — MEMORY AND GARBAGE COLLECTION
+
+One of Java's biggest selling points: **you don't manage memory manually**. In languages like C, you allocate and free memory yourself, and mistakes cause crashes and security holes. Java handles it automatically. Understanding *how* makes you a far better developer.
+
+## 21.1 The Two Main Memory Areas — Stack and Heap
+
+Java divides memory into two key regions:
+
+```
+┌──────────────────┐         ┌──────────────────────────┐
+│      STACK       │         │          HEAP            │
+│  (per thread)    │         │     (shared by all)      │
+│                  │         │                          │
+│  - method calls  │         │  - all OBJECTS live here │
+│  - local vars    │  ───►   │  - created with `new`    │
+│  - primitive     │ refs    │  - garbage collected     │
+│    values        │ point   │                          │
+│  - references    │ to heap │                          │
+│                  │         │                          │
+│  fast, small,    │         │  larger, slower,         │
+│  auto-cleaned    │         │  GC-managed              │
+└──────────────────┘         └──────────────────────────┘
+```
+
+- **Stack** — stores method calls, local variables, and primitive values. Each thread has its own. It's fast and cleaned automatically as methods return.
+- **Heap** — where *all objects* live. Shared across the whole program. This is what the garbage collector manages.
+
+```java
+void example() {
+    int x = 5;                    // x (primitive) lives on the STACK
+    String name = new String("Hi"); // 'name' reference on STACK,
+                                  // the actual String OBJECT on the HEAP
+}
+```
+
+> **🧠 Real-Life Analogy:** The **stack** is your **desk** while working — you put the current task's papers on it, and when you finish a task, you sweep them off instantly. Neat, fast, temporary. The **heap** is the **warehouse** — big storage where all the actual goods (objects) live. Your desk holds little tickets (references) pointing to where things are in the warehouse.
+
+## 21.2 What Garbage Collection Does
+
+When you create an object with `new`, it takes heap space. When no part of your program can reach that object anymore (no references point to it), it's **garbage** — useless but still occupying memory. The **Garbage Collector (GC)** automatically finds and removes such objects, freeing the space.
+
+```java
+String s = new String("Hello");
+s = null;   // the "Hello" object now has NO references → eligible for GC
+```
+
+> **🧠 Real-Life Analogy:** Garbage collection is an **automatic cleaning service** for a hotel. When guests check out (no references to a room's contents), the cleaning crew comes around, clears the room, and makes it available again — without the manager (you) having to track every room manually. In C, *you're* the cleaner and forgetting a room means it stays occupied forever (a memory leak).
+
+## 21.3 How GC Decides What's Garbage — Reachability
+
+The GC starts from "**GC roots**" (things definitely in use: the stack, static fields) and follows every reference. Anything it can reach is "live." Anything it *can't* reach is garbage.
+
+```mermaid
+flowchart LR
+    R["GC Roots<br/>(stack, statics)"] --> A["Object A ✓ live"]
+    A --> B["Object B ✓ live"]
+    C["Object C<br/>✗ unreachable<br/>= garbage"]
+    D["Object D<br/>✗ unreachable<br/>= garbage"]
+    C -.-> D
+```
+
+Objects C and D reference each other but nothing reachable points to *them* — so both are collected. (This is why Java doesn't leak from simple reference cycles, unlike naive reference-counting.)
+
+## 21.4 Generational Garbage Collection
+
+The GC uses a clever insight: **most objects die young** (temporary objects created and discarded quickly). So it splits the heap into generations:
+
+- **Young Generation** — new objects. Collected often and quickly (a "minor GC"). Most objects die here.
+- **Old Generation** — objects that survived several collections (long-lived). Collected less often (a "major GC," slower).
+
+> **💡 Behind the Scenes:** This "weak generational hypothesis" — most objects die young — lets the JVM collect the young generation very cheaply and frequently while rarely touching the expensive old generation. It's why Java's GC is fast despite running constantly. Modern collectors (G1, ZGC) make pauses tiny even on huge heaps.
+
+## 21.5 Memory Leaks in Java — Yes, They Still Happen
+
+GC handles unreachable objects, but you can still leak memory by *accidentally keeping references* to things you no longer need:
+
+```java
+// A static list that grows forever and never gets cleared
+static List<byte[]> cache = new ArrayList<>();
+void process() {
+    cache.add(new byte[1_000_000]);   // added but never removed → leak
+}
+```
+
+The objects are still "reachable" (the list holds them), so GC won't collect them — even though you don't actually need them anymore.
+
+> **⚠️ Common Mistake:** Assuming "Java has GC, so no memory leaks." You leak whenever you hold references too long: unbounded caches, forgotten listeners, `static` collections that only grow. The fix is to *release* references (remove from collections, use bounded caches).
+
+## 21.6 You Can Suggest, But Not Force, GC
+
+```java
+System.gc();   // a SUGGESTION to run GC — the JVM may ignore it
+```
+
+You almost never call this. Trust the JVM; it knows better when to collect.
+
+> **📌 Remember This:** **Stack** = method calls + locals + primitives (per thread, auto-cleaned). **Heap** = all objects (shared, GC-managed). GC removes **unreachable** objects automatically. Most objects die young (generational GC). You can still leak by holding references too long.
+
+---
+
+# SECTION 22 — FILE AND I/O
+
+**I/O (Input/Output)** is how your program talks to the outside world — reading files, writing logs, taking keyboard input. Modern Java makes this clean and safe.
+
+## 22.1 Reading Keyboard Input
+
+The `Scanner` class reads input from the user:
+
+```java
+import java.util.Scanner;
+
+Scanner scanner = new Scanner(System.in);
+System.out.print("Enter your name: ");
+String name = scanner.nextLine();
+System.out.print("Enter your age: ");
+int age = scanner.nextInt();
+System.out.println("Hi " + name + ", you are " + age);
+scanner.close();
+```
+
+## 22.2 Writing to a File
+
+The modern, simplest way uses `java.nio.file`:
+
+```java
+import java.nio.file.*;
+
+// Write text to a file (creates or overwrites)
+Files.writeString(Path.of("output.txt"), "Hello, file!");
+
+// Append to a file
+Files.writeString(Path.of("output.txt"), "\nMore text",
+                  StandardOpenOption.APPEND);
+```
+
+## 22.3 Reading from a File
+
+```java
+// Read the whole file as one String
+String content = Files.readString(Path.of("data.txt"));
+
+// Read all lines into a List
+List<String> lines = Files.readAllLines(Path.of("data.txt"));
+for (String line : lines) {
+    System.out.println(line);
+}
+```
+
+## 22.4 Reading Large Files Efficiently
+
+For big files, don't load it all into memory — read line by line with try-with-resources so the file closes automatically:
+
+```java
+try (BufferedReader reader = Files.newBufferedReader(Path.of("big.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    System.out.println("Couldn't read file: " + e.getMessage());
+}
+```
+
+> **🧠 Real-Life Analogy:** Reading a whole file with `readString` is like **carrying every grocery bag in one trip** — fine for a few items, impossible for a huge load. `BufferedReader` reading line by line is like a **conveyor belt** — items come one at a time, you handle each, and you never have to hold everything at once. Use it for large files.
+
+## 22.5 Why try-with-resources Matters Here
+
+Files, network connections, and database links are **limited resources**. If you open them and forget to close them, you "leak" them, and eventually the system runs out. Try-with-resources guarantees they close — even if an error occurs:
+
+```java
+try (var reader = Files.newBufferedReader(path)) {
+    // use reader
+}   // automatically closed here, guaranteed
+```
+
+> **💡 Behind the Scenes:** Any class implementing `AutoCloseable` can go in the try-with-resources parentheses. When the block ends — normally *or* via exception — Java calls `close()` for you in the right order. This single feature eliminated a whole category of resource-leak bugs that plagued older Java code.
+
+> **📌 Remember This:** Use `Scanner` for input, `Files.writeString`/`readString` for simple file work, and `BufferedReader` with **try-with-resources** for large files — it auto-closes resources and prevents leaks.
+
+---
+
+# SECTION 23 — MODERN JAVA
+
+Java releases a new version every six months. The latest **LTS (Long-Term Support)** release is **Java 25** (September 2025); **Java 21** is the previous LTS that many teams still target, and **Java 26** is the latest short-term release. Here are the modern features that changed how Java is written. You don't need them as a beginner, but they make code dramatically cleaner.
+
+## 23.1 var — Type Inference (Java 10)
+
+Let the compiler figure out local-variable types:
+
+```java
+var list = new ArrayList<String>();   // instead of ArrayList<String> list = ...
+var count = 10;                        // int
+for (var item : list) { }              // cleaner loops
+```
+
+Still fully type-safe — the type is fixed, just not written out.
+
+## 23.2 Records — Data Classes Without Boilerplate (Java 16)
+
+A **record** is a concise way to make a class whose job is just to hold data. One line replaces dozens:
+
+```java
+// The old way — ~40 lines of constructor, getters, equals, hashCode, toString
+// The record way — ONE line that generates all of it:
+record Point(int x, int y) {}
+
+Point p = new Point(3, 4);
+p.x();              // 3  (accessor)
+p.equals(other);    // value-based equality, auto-generated
+System.out.println(p);  // Point[x=3, y=4]  — toString auto-generated
+```
+
+> **🧠 Real-Life Analogy:** A record is a **pre-printed form**. Instead of handwriting every field, label, and signature line from scratch (the old verbose class), you grab a template that already has all the standard parts. You just fill in the data. Records eliminate the tedious, error-prone boilerplate.
+
+## 23.3 Sealed Classes — Controlled Inheritance (Java 17)
+
+Restrict *exactly* which classes can extend yours:
+
+```java
+sealed interface Shape permits Circle, Square, Triangle {}
+// Only these three can implement Shape — no surprises
+```
+
+This makes your type hierarchy a closed, known set — great with pattern matching.
+
+## 23.4 Pattern Matching & Switch Expressions (Java 21)
+
+Switch became far more powerful — it can match on *type* and return a value:
+
+```java
+String describe(Object obj) {
+    return switch (obj) {
+        case Integer i -> "An integer: " + i;
+        case String s  -> "A string of length " + s.length();
+        case Point p   -> "A point at " + p.x() + "," + p.y();
+        default        -> "Something else";
+    };
+}
+```
+
+No casting, no fall-through bugs, and the compiler checks you covered every case.
+
+## 23.5 Text Blocks (Java 15)
+
+Multi-line strings without escape clutter:
+
+```java
+String html = """
+    <html>
+        <body>
+            <p>Hello</p>
+        </body>
+    </html>
+    """;
+```
+
+## 23.6 Virtual Threads (Java 21)
+
+Covered in Section 20 — lightweight threads that let you write simple blocking code that scales to millions of concurrent tasks. One of the most important changes in Java's history for server applications.
+
+## 23.7 Simpler Programs (Java 25)
+
+Java 25 finalized a lighter style for beginners and small scripts — you can write a runnable program without the full class/`main` ceremony, and `IO.println(...)` for quick output. This lowers the entry barrier for newcomers while keeping the full power for larger apps.
+
+> **📌 Remember This:** Modern Java is leaner: **`var`** (inferred types), **records** (one-line data classes), **sealed** (controlled inheritance), **pattern-matching `switch`** (type-based, returns values), **text blocks** (multi-line strings), and **virtual threads** (massive concurrency). Target an **LTS** version (21 or 25) for production.
+
+---
+# SECTION 24 — COMMON MISTAKES
+
+These are the mistakes nearly every Java learner makes. Knowing them in advance saves you hours of confusion and makes you look far more experienced.
+
+## 24.1 Comparing Objects with == Instead of .equals()
+
+```java
+String a = new String("hi");
+String b = new String("hi");
+a == b          // ❌ false — compares memory addresses
+a.equals(b)     // ✅ true  — compares content
+```
+**Rule:** `==` for primitives, `.equals()` for objects (Strings, Integers, everything). This is the #1 beginner bug.
+
+## 24.2 NullPointerException
+
+```java
+String name = null;
+name.length();   // 💥 crash
+```
+**Fix:** Check for null, or use `Optional`. Be especially careful with values from databases, user input, or method returns that might be `null`.
+
+## 24.3 Integer Division Surprise
+
+```java
+int result = 5 / 2;        // 2, not 2.5 !
+double correct = 5.0 / 2;  // 2.5 — make one operand a double
+```
+
+## 24.4 Off-by-One Errors with Arrays
+
+```java
+int[] arr = new int[5];     // valid indexes: 0,1,2,3,4
+for (int i = 0; i <= arr.length; i++) {  // ❌ <= goes to 5 → crash
+    arr[i] = i;
+}
+// Fix: use  i < arr.length
+```
+Arrays start at index **0**; the last index is `length - 1`. Loop with `<`, not `<=`.
+
+## 24.5 Forgetting break in Old-Style switch
+
+```java
+switch (x) {
+    case 1: doA();   // ❌ no break → falls through to case 2 as well!
+    case 2: doB();
+}
+```
+**Fix:** add `break`, or use the modern `case 1 -> doA();` arrow syntax which never falls through.
+
+## 24.6 Modifying a Collection While Looping Over It
+
+```java
+for (String item : list) {
+    list.remove(item);   // 💥 ConcurrentModificationException
+}
+```
+**Fix:** use an `Iterator`'s `remove()`, or `list.removeIf(condition)`, or collect items to remove and delete them after the loop.
+
+## 24.7 Calling run() Instead of start() on Threads
+
+```java
+thread.run();    // ❌ runs on the current thread — no concurrency
+thread.start();  // ✅ starts a new thread
+```
+
+## 24.8 Mutating Strings in a Loop
+
+```java
+String s = "";
+for (int i = 0; i < 10000; i++) s += i;   // ❌ slow — new String each time
+```
+**Fix:** use `StringBuilder`.
+
+## 24.9 Catching Exceptions and Doing Nothing
+
+```java
+try {
+    riskyOperation();
+} catch (Exception e) {
+    // ❌ empty — the error vanishes silently, impossible to debug
+}
+```
+**Fix:** at minimum log it. Never swallow exceptions silently — it hides real problems.
+
+## 24.10 Best Practices Checklist
+
+| Practice | Why |
+|----------|-----|
+| Use meaningful names (`customerCount`, not `cc`) | Code is read far more than written |
+| Keep methods small (one job each) | Easier to test and understand |
+| Make fields `private`; expose via methods | Encapsulation protects your data |
+| Prefer `final` for values that shouldn't change | Prevents accidental reassignment |
+| Favor interfaces over concrete types: `List<X> x = new ArrayList<>()` | Flexible — easy to swap implementations |
+| Handle or log every exception meaningfully | Silent failures are debugging nightmares |
+| Don't optimize prematurely | Write clear code first; optimize the proven slow parts |
+| Close resources (try-with-resources) | Prevents resource leaks |
+| Avoid `null`; use `Optional` where sensible | Fewer NullPointerExceptions |
+| Follow naming conventions (`ClassName`, `methodName`, `CONSTANT`) | Consistency helps everyone |
+
+> **📌 Remember This:** The big four beginner traps: **`==` vs `.equals()`**, **NullPointerException**, **integer division**, and **off-by-one** array errors. Write clear names, keep methods small, encapsulate data, and never swallow exceptions.
+
+---
+
+# SECTION 25 — REVISION CHEAT SHEET
+
+The entire handbook compressed for fast review. Skim this before an interview or when you need a quick reminder.
+
+## 25.1 The Foundations
+
+- **Java** = a language + a platform (JVM). "Write once, run anywhere."
+- **JDK** (build) ⊃ **JRE** (run) ⊃ **JVM** (executes bytecode).
+- `.java` → (javac compiles) → `.class` bytecode → (JVM runs) → output. JIT speeds up hot code.
+- Program starts at `public static void main(String[] args)`. Statements end with `;`. Case-sensitive.
+
+## 25.2 Types & Variables
+
+- **8 primitives**: `byte short int long float double char boolean`. `int` and `double` are the defaults.
+- **Reference types** (String, arrays, objects) hold an *address*, not the value.
+- `final` = constant. `var` = compiler infers the type (still strongly typed).
+- For money use `BigDecimal`, never `double`.
+
+## 25.3 Operators & Control Flow
+
+- `/` on ints truncates; `%` is the remainder (even/odd, wrapping).
+- `==` compares (primitives); use `.equals()` for objects.
+- `&&` `||` short-circuit — put the safe/cheap check first.
+- `if/else if/else`, modern `switch ->` (no fall-through, returns a value).
+- Loops: `for` (known count), `while` (condition), `do-while` (≥1 run), `for-each` (collections).
+
+## 25.4 Methods
+
+- Reusable named logic — **DRY** (Don't Repeat Yourself).
+- **Overloading** = same name, different parameters (compile-time).
+- **Recursion** needs a base case or it crashes (StackOverflowError).
+- `static` = belongs to the class, not an object.
+
+## 25.5 Arrays & Strings
+
+- Arrays: fixed size, same type, index from **0**, use `.length`.
+- Strings are **immutable** — operations return new Strings.
+- Compare Strings with `.equals()`. Build in loops with **StringBuilder**.
+
+## 25.6 OOP — The Four Pillars ("A PIE")
+
+| Pillar | Meaning | Keyword/Tool |
+|--------|---------|--------------|
+| **Abstraction** | Show what, hide how | `abstract`, `interface` |
+| **Polymorphism** | One call, many behaviors | overriding (`@Override`) |
+| **Inheritance** | Reuse via parent class | `extends`, `super` |
+| **Encapsulation** | Hide data, control access | `private` + getters/setters |
+
+- **Class** = blueprint, **object** = the real thing (`new`).
+- **Constructor** sets up a new object; `this` = current object.
+- A class **extends one** class but **implements many** interfaces.
+- **Overriding** (replace, runtime) ≠ **Overloading** (same name diff params, compile-time).
+
+## 25.7 Exceptions
+
+- `try` risky / `catch` handle / `finally` always runs (or try-with-resources for auto-close).
+- **Checked** (compiler-enforced, external causes) vs **unchecked** (RuntimeException, bugs).
+- `throw` an exception; `throws` declares one.
+- **NullPointerException** is the most common — guard against null.
+
+## 25.8 Collections (the daily three)
+
+| Type | Holds | Implementation |
+|------|-------|----------------|
+| **List** | ordered, duplicates OK | `ArrayList` |
+| **Set** | unique only | `HashSet` |
+| **Map** | key → value | `HashMap` |
+
+- HashMap/HashSet are near-instant via hashing.
+- Declare by interface: `List<String> x = new ArrayList<>();`
+
+## 25.9 Generics
+
+- `<T>` = type placeholder filled when used → type safety + reuse + no casts.
+- `<T extends Number>` bounds it; `?` is a wildcard.
+- Type info is **erased** at runtime.
+
+## 25.10 Functional & Streams
+
+- **Lambda**: `(x) -> x * 2` — behavior as a value.
+- **Stream pipeline**: `.filter(...)` keep → `.map(...)` transform → `.collect(...)` gather.
+- **Method reference**: `String::toUpperCase`. **Optional**: avoids nulls.
+- Streams are lazy; `.parallelStream()` uses multiple cores.
+
+## 25.11 Concurrency
+
+- **Thread** = independent worker. Call `start()`, not `run()`.
+- Shared data → **race conditions**. Fix with `synchronized`, `Atomic`, `volatile`.
+- Use an **ExecutorService** (thread pool), not raw threads.
+- Beware **deadlock** (circular waiting). **Virtual threads** (21+) scale massively.
+
+## 25.12 Memory & GC
+
+- **Stack**: method calls, locals, primitives (per thread, auto). **Heap**: all objects (shared, GC'd).
+- GC removes **unreachable** objects automatically. Most objects die young (generational).
+- You can still leak by holding references too long (unbounded caches, static lists).
+
+## 25.13 Modern Java (target LTS 21 or 25)
+
+- `var`, **records** (one-line data classes), **sealed** classes, **pattern-matching switch**, **text blocks**, **virtual threads**.
+
+## 25.14 The Mistakes That Bite Everyone
+
+`==` vs `.equals()` · NullPointerException · integer division · off-by-one arrays · missing `break` · modifying a collection while looping · `run()` vs `start()` · String concatenation in loops · swallowed exceptions.
+
+---
+
+## Final Word
+
+You now have the full map of Java — from what the JVM is, through the four pillars of OOP, to streams, concurrency, and the memory model. The path to mastery from here is **writing code**. Pick small projects (a to-do app, a calculator, a file organizer), and reach back into this handbook whenever a concept feels fuzzy. The analogies are here to make ideas *stick*; the code is here to make them *real*.
+
+Re-read Sections 10–15 (OOP) and 17–19 (collections, generics, streams) most often — they carry the most weight in real work and interviews. Happy coding. ☕
+
+*End of handbook.*
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+  /* ---------- THEME ---------- */
+  const root=document.documentElement;
+  const saved=localStorage.getItem('jh-theme');
+  if(saved) root.setAttribute('data-theme',saved);
+  $('#themeBtn').addEventListener('click',()=>{
+    const next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    localStorage.setItem('jh-theme',next);
+    if(window.__mermaidRender) window.__mermaidRender(true);
+  });
+
+  /* ---------- PARSE MARKDOWN ---------- */
+  const raw=document.getElementById('md-source').textContent;
+  // strip the original H1 title + lede + TOC block (we have a custom hero); keep from first "# SECTION"
+  let md=raw;
+  const cut=md.indexOf('# SECTION 1');
+  if(cut>-1) md=md.slice(cut);
+
+  marked.setOptions({gfm:true,breaks:false,headerIds:false,mangle:false});
+
+  // custom renderer: capture mermaid fences, slugged headings
+  const renderer=new marked.Renderer();
+  const slugs={};
+  function slugify(t){
+    let s=t.toLowerCase().replace(/<[^>]+>/g,'').replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-');
+    if(slugs[s]!=null){slugs[s]++;s=s+'-'+slugs[s];}else slugs[s]=0;
+    return s;
+  }
+  const headings=[];
+  renderer.heading=function(text,level){
+    const clean=text.replace(/<[^>]+>/g,'');
+    const id=slugify(clean);
+    if(level===1) headings.push({id,text:clean});
+    const anchor=`<a class="anchor" href="#${id}" aria-label="Link to section">#</a>`;
+    return `<h${level} id="${id}">${text}${level<=2?anchor:''}</h${level}>`;
+  };
+  let mermaidStore=[],mi=0;
+  renderer.code=function(code,lang){
+    if(lang==='mermaid'){
+      const ph=`__MERMAID_${mi}__`;mermaidStore[mi]=code;mi++;
+      return `<div class="mermaid-ph" data-i="${mi-1}">${ph}</div>`;
+    }
+    let out;
+    try{ out = (lang && hljs.getLanguage(lang)) ? hljs.highlight(code,{language:lang}).value : hljs.highlightAuto(code).value; }
+    catch(e){ out = code.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+    return `<pre><button class="copy-btn">copy</button><code class="hljs ${lang||''}">${out}</code></pre>`;
+  };
+
+  $('#content').innerHTML = marked.parse(md,{renderer});
+
+  /* ---------- MERMAID ---------- */
+  $$('.mermaid-ph').forEach(ph=>{
+    const i=+ph.dataset.i;
+    const d=document.createElement('div');
+    d.className='mermaid';d.dataset.src=mermaidStore[i];
+    d.textContent=mermaidStore[i];
+    ph.replaceWith(d);
+  });
+  function mermaidTheme(){return root.getAttribute('data-theme')==='dark'?'dark':'neutral';}
+  window.__mermaidRender=function(rerender){
+    if(rerender){
+      $$('.mermaid').forEach(el=>{el.removeAttribute('data-processed');el.innerHTML=el.dataset.src;});
+    }
+    try{
+      mermaid.initialize({startOnLoad:false,theme:mermaidTheme(),securityLevel:'loose',
+        themeVariables:{fontFamily:'JetBrains Mono, monospace',primaryColor:'#161b22',primaryBorderColor:'#e07b39',lineColor:'#e07b39',fontSize:'13px'}});
+      mermaid.run({nodes:$$('.mermaid')});
+    }catch(e){console.warn('mermaid',e);}
+  };
+  window.__mermaidRender(false);
+
+  /* ---------- THEMED CALLOUTS ---------- */
+  $$('.content blockquote').forEach(bq=>{
+    const t=bq.textContent;
+    if(/Memory Trick/.test(t)) bq.classList.add('cb-memory');
+    else if(/Behind the Scenes/.test(t)) bq.classList.add('cb-behind');
+    else if(/Common Mistake/.test(t)) bq.classList.add('cb-mistake');
+    else if(/Real-Life Analogy/.test(t)) bq.classList.add('cb-analogy');
+    else bq.classList.add('cb-quote');
+  });
+
+  /* ---------- COPY BUTTONS ---------- */
+  $$('.copy-btn').forEach(b=>b.addEventListener('click',()=>{
+    const code=b.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(()=>{b.textContent='copied ✓';setTimeout(()=>b.textContent='copy',1400);});
+  }));
+
+  /* ---------- BUILD SIDEBAR ---------- */
+  const nav=$('#navlinks');
+  headings.forEach((h)=>{
+    const m=h.text.match(/SECTION\s+(\d+)\s*[—-]\s*(.+)/i);
+    const num=m?m[1]:'';
+    const title=m?m[2]:h.text;
+    const a=document.createElement('a');
+    a.href='#'+h.id;
+    a.dataset.id=h.id;
+    a.innerHTML=`<span class="num">${num}</span><span class="t">${title.replace(/\s*\(.*?\)\s*/g,'')}</span>`;
+    nav.appendChild(a);
+  });
+
+  /* ---------- SCROLLSPY ---------- */
+  const navAs=$$('#navlinks a');
+  const map={};navAs.forEach(a=>map[a.dataset.id]=a);
+  const hs=headings.map(h=>document.getElementById(h.id));
+  let ticking=false;
+  function spy(){
+    const y=window.scrollY+120;let cur=hs[0];
+    for(const el of hs){if(el && el.offsetTop<=y)cur=el;else break;}
+    navAs.forEach(a=>a.classList.remove('active'));
+    if(cur&&map[cur.id]){map[cur.id].classList.add('active');
+      const a=map[cur.id];
+      const nb=$('#sidebar').getBoundingClientRect();const ab=a.getBoundingClientRect();
+      if(ab.bottom>nb.bottom||ab.top<nb.top)a.scrollIntoView({block:'center'});
+    }
+    // progress
+    const doc=document.documentElement;
+    const sc=(window.scrollY)/(doc.scrollHeight-doc.clientHeight);
+    $('#progress').style.width=Math.min(100,sc*100)+'%';
+    $('#totop').classList.toggle('show',window.scrollY>600);
+    ticking=false;
+  }
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(spy);ticking=true;}},{passive:true});
+  spy();
+
+  /* ---------- SEARCH (filter sidebar) ---------- */
+  $('#search').addEventListener('input',e=>{
+    const q=e.target.value.toLowerCase().trim();
+    navAs.forEach(a=>{
+      const hit=a.textContent.toLowerCase().includes(q);
+      a.style.display=hit?'':'none';
+    });
+  });
+
+  /* ---------- MOBILE NAV ---------- */
+  const sb=$('#sidebar'),scrim=$('#scrim');
+  function closeNav(){sb.classList.remove('open');scrim.classList.remove('show');}
+  $('#menuBtn').addEventListener('click',()=>{sb.classList.toggle('open');scrim.classList.toggle('show');});
+  scrim.addEventListener('click',closeNav);
+  nav.addEventListener('click',e=>{if(e.target.closest('a')&&window.innerWidth<=860)closeNav();});
+
+  /* ---------- BACK TO TOP ---------- */
+  $('#totop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+  /* ---------- DONE ---------- */
+  setTimeout(()=>$('#loader').classList.add('done'),120);
+})();
+</script>
+</body>
+</html>
